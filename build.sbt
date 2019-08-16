@@ -9,7 +9,8 @@ lazy val plugin = project
     scalaVersion := dottyVersion,
 
     libraryDependencies ++= Seq(
-      "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value % "provided"
+      "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value % "provided",
+      "com.novocode" % "junit-interface" % "0.11" % "test"
     )
   )
 
