@@ -1,4 +1,5 @@
 package org.scalaverify
+package test
 
 import org.junit.{ Test, BeforeClass, AfterClass }
 import org.junit.Assert._
