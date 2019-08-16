@@ -1,4 +1,4 @@
-package analysis
+package org.scalaverify
 package util
 
 import dotty.tools.dotc.ast.tpd

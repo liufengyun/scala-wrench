@@ -3,9 +3,9 @@ lazy val dottyVersion = "0.17.0-RC1"
 lazy val plugin = project
   .in(file("plugin"))
   .settings(
-    name := "init-checker",
+    name := "scala-verify",
     version := "0.0.1",
-    organization := "ch.epfl.lamp",
+    organization := "me.fengy",
     scalaVersion := dottyVersion,
 
     libraryDependencies ++= Seq(

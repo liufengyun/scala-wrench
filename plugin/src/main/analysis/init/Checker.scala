@@ -1,4 +1,4 @@
-package analysis
+package org.scalaverify
 package init
 
 import scala.language.implicitConversions

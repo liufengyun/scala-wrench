@@ -1,4 +1,4 @@
-package analysis
+package org.scalaverify
 
 import dotty.tools.dotc.plugins._
 
