@@ -5,7 +5,7 @@ lazy val plugin = project
   .settings(
     name := "scala-verify",
     version := "0.0.1",
-    organization := "me.fengy",
+    organization := "org.scalaverify",
     scalaVersion := dottyVersion,
 
     libraryDependencies ++= Seq(

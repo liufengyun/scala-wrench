@@ -16,7 +16,7 @@ import Constants.Constant
 import Types._
 import transform.{CheckStatic}
 
-import analysis.util._
+import org.scalaverify.util._
 
 class Checker extends PluginPhase {
   import tpd._
