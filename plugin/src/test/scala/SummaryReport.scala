@@ -29,9 +29,6 @@ trait SummaryReporting {
   def echoSummary(): Unit
 }
 
-/** A summary report that logs to both stdout and the `TestReporter.logWriter`
- *  which outputs to a log file in `./testlogs/`
- */
 final class SummaryReport extends SummaryReporting {
   import scala.collection.JavaConverters._
 

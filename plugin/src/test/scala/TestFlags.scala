@@ -6,21 +6,26 @@ import java.io.{File => JFile}
 final case class TestFlags(
   defaultClassPath: String,
   runClassPath: String, // class path that is used when running `run` tests (not compiling)
-  options: Array[String]) {
+  options: Map[String, String]) { // only valid compiler options can be stored directly in `options`
 
-  def and(flags: String*): TestFlags =
-    TestFlags(defaultClassPath, runClassPath, options ++ flags)
+  def and(flag: String): TestFlags =
+    copy(options = options + (flag -> ""))
+
+  def and(flag: String, value: String): TestFlags =
+    copy(options = options + (flag -> value))
 
   def without(flags: String*): TestFlags =
-    TestFlags(defaultClassPath, runClassPath, options diff flags)
+    copy(options = options -- flags)
 
   def withClasspath(classPath: String): TestFlags =
-    TestFlags(s"$defaultClassPath${JFile.pathSeparator}$classPath", runClassPath, options)
+    copy(defaultClassPath = s"$defaultClassPath${JFile.pathSeparator}$classPath")
 
   def withRunClasspath(classPath: String): TestFlags =
-    TestFlags(defaultClassPath, s"$runClassPath${JFile.pathSeparator}$classPath", options)
+    copy(runClassPath = s"$runClassPath${JFile.pathSeparator}$classPath")
 
-  def all: Array[String] = Array("-classpath", defaultClassPath) ++ options
+  def all: Array[String] = Array("-classpath", defaultClassPath) ++ options.flatMap { (k, v) =>
+    if (v.length == 0) Array(k) else Array(k, v)
+  }
 
   /** Subset of the flags that should be passed to javac. */
   def javacFlags: Array[String] = {
@@ -32,7 +37,7 @@ final case class TestFlags(
 }
 
 object TestFlags {
-  def apply(classPath: String, flags: Array[String]): TestFlags = TestFlags(classPath, classPath, flags)
+  def apply(classPath: String): TestFlags = TestFlags(classPath, classPath, Map.empty)
 
   val defaultOutputDir = "out" + JFile.separator
 }
