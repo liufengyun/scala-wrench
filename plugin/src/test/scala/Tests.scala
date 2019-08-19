@@ -4,7 +4,7 @@ package test
 import org.junit.{ Test, BeforeClass, AfterClass }
 import org.junit.Assert._
 
-import org.scalawrench._
+import org.xmid.wrench._
 
 class Tests {
   import Tests._

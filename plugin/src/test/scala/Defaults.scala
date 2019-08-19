@@ -3,7 +3,7 @@ package test
 
 import java.io.File
 
-import org.scalawrench._
+import org.xmid.wrench._
 
 object Defaults {
   val rootOutputDir = "out" + File.separator

@@ -1,4 +1,5 @@
-package org.scalawrench
+package org.xmid
+package wrench
 
 import scala.collection.mutable
 import scala.language.implicitConversions

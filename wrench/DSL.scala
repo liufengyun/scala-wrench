@@ -1,4 +1,5 @@
-package org.scalawrench
+package org.xmid
+package wrench
 
 def file(f: String) given TestFlags, TestContext: TestCase = TestCase.file(f)
 def directory(f: String) given TestFlags, TestContext: TestCase = TestCase.directory(f)

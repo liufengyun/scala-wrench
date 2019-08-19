@@ -11,7 +11,7 @@ lazy val plugin: Project = project
   .settings(
     name := "scala-verify",
     version := "0.0.1",
-    organization := "org.scalaverify",
+    organization := "xmid.org",
     scalaVersion := dottyVersion,
     fork := true,
     baseDirectory in Test := baseDirectory.value / "..",
@@ -45,6 +45,6 @@ lazy val wrench = project
   .settings(
     name := "scala-wrench",
     version := "0.0.1",
-    organization := "org.scalawrench",
+    organization := "xmid.org",
     scalaVersion := dottyVersion
   )

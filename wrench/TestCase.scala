@@ -1,4 +1,5 @@
-package org.scalawrench
+package org.xmid
+package wrench
 
 import java.io.{File => JFile}
 
