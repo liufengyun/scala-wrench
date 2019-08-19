@@ -1,4 +1,4 @@
-package org.scalaverify
+package org.xmid
 package init
 
 import scala.language.implicitConversions
@@ -16,7 +16,7 @@ import Constants.Constant
 import Types._
 import transform.{CheckStatic}
 
-import org.scalaverify.util._
+import org.xmid.init.util._
 
 class Checker extends PluginPhase {
   import tpd._

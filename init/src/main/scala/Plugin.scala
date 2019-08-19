@@ -1,7 +1,7 @@
-package org.scalaverify
+package org.xmid
+package init
 
 import dotty.tools.dotc.plugins._
-import org.scalaverify.init.Checker
 
 class Plugin extends StandardPlugin {
   val name: String = "checker"

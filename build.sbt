@@ -6,10 +6,10 @@ def findLib(attList: Seq[Attributed[File]], name: String) =
     .find(_.contains(name))
     .toList.mkString(java.io.File.pathSeparator)
 
-lazy val plugin: Project = project
-  .in(file("plugin"))
+lazy val init: Project = project
+  .in(file("init"))
   .settings(
-    name := "scala-verify",
+    name := "init-checker",
     version := "0.0.1",
     organization := "xmid.org",
     scalaVersion := dottyVersion,

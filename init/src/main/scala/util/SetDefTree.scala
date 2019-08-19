@@ -1,4 +1,4 @@
-package org.scalaverify
+package org.xmid.init
 package util
 
 import dotty.tools.dotc.ast.tpd
