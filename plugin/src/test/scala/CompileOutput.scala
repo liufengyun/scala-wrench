@@ -3,7 +3,7 @@ package test
 
 import java.io.{File => JFile}
 
-final case class TestOutput(input: TestInput, reporter: TestReporter) {
+final case class CompileOutput(input: CompileInput, reporter: TestReporter) {
   def shouldFail(implicit summary: SummaryReporting): Unit = {
     summary.echo("tesing " + input.name)
     var failed: Boolean = false
