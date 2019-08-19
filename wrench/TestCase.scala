@@ -3,13 +3,39 @@ package wrench
 
 import java.io.{File => JFile}
 
-final case class TestCase(name: String, flags: TestFlags, targetDir: JFile, files: List[JFile], log: JFile) {
+final case class TestCase(name: String, flags: TestFlags, targetDir: JFile, files: List[JFile], log: JFile, groupable: Boolean) {
   def compile: CompileOutput = {
     val out = targetDir.getAbsolutePath()
     val flags2 = flags.and("-d", out).withClassPath(out)
     targetDir.mkdirs()
-    val reporter = Toolbox.compile(files, flags2, log)
-    CompileOutput(this, reporter)
+
+    def endsWithNum(f: JFile): Boolean = {
+      val name = f.getName().withoutExtension
+      val index = name.lastIndexOf('_')
+      index > 0 && {
+        val suffix = name.substring(index + 1, name.length)
+        suffix.forall(Character.isDigit)
+      }
+    }
+
+    if (groupable && files.forall(endsWithNum)) {
+      val batches = files.groupBy[Int] { file =>
+        val name = file.getName().withoutExtension
+        name.substring(name.lastIndexOf('_') + 1, name.length).toInt
+      }.toList.sortBy(_._1).map(_._2)
+
+      val errors = batches.flatMap { batch =>
+        val reporter = Toolbox.compile(batch, flags2, log)
+        reporter.allErrors
+      }
+      targetDir.deleteRecursive()
+      CompileOutput(this, errors)
+    }
+    else {
+      val reporter = Toolbox.compile(files, flags2, log)
+      targetDir.deleteRecursive()
+      CompileOutput(this, reporter.allErrors)
+    }
   }
 }
 
@@ -17,16 +43,16 @@ object TestCase {
   private def outDir(file: JFile)(implicit ctx: TestContext): JFile =
     new JFile(
       ctx.rootOutDirectory + JFile.separator +
-        file.getName.replaceFirst("[.][^.]+$", "") + JFile.separator
+        file.getName.withoutExtension + JFile.separator
     )
 
-  private def logFile(file: JFile): JFile = new JFile(file.getAbsolutePath() + ".out")
+  private def logFile(file: JFile): JFile = new JFile(file.getAbsolutePath() + ".out").ensureFresh()
 
   /** A single file from the string path `f` using the supplied flags */
   def file(f: String)(implicit flags: TestFlags, ctx: TestContext): TestCase = {
     val sourceFile = new JFile(f)
     assert(sourceFile.exists(), s"the file ${sourceFile.getAbsolutePath()} does not exist")
-    TestCase(f, flags, outDir(sourceFile), sourceFile :: Nil, logFile((sourceFile)))
+    TestCase(f, flags, outDir(sourceFile), sourceFile :: Nil, logFile((sourceFile)), groupable = false)
   }
 
   /** A directory `f` using the supplied `flags`. This method does
@@ -47,7 +73,7 @@ object TestCase {
 
     val sortedFiles = flatten(sourceDir).sorted
 
-    TestCase(dir, flags, outDir(sourceDir), sortedFiles, logFile(sourceDir))
+    TestCase(dir, flags, outDir(sourceDir), sortedFiles, logFile(sourceDir), groupable = !recursive)
   }
 
   /** This function creates a list of TestCase for the files and folders
@@ -66,7 +92,7 @@ object TestCase {
     assert(f.exists(), "the directory " + f.getAbsolutePath + " does not exist")
     f.listFiles.foldLeft(List.empty[TestCase]) { case (inputs, f) =>
       if (f.getName().endsWith(".scala") || f.getName().endsWith(".java")) file(f.getPath) :: inputs
-      else if (f.isDirectory) directory(f.getPath) :: inputs
+      else if (f.isDirectory) directory(f.getPath, recursive = false) :: inputs
       else inputs
     }
   }

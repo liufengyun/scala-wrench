@@ -1,0 +1,1 @@
+class B(b: A) // error

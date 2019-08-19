@@ -1,0 +1,1 @@
+class A(b: B)

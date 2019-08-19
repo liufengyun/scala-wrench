@@ -26,12 +26,16 @@ trait TestContext {
 
   /** The root directory for compile output */
   def rootOutDirectory: String
+
+  /** Clean up after test */
+  def cleanup: Unit
 }
 
 final class DefaultContext(val rootOutDirectory: String) extends TestContext {
   import scala.collection.JavaConverters._
 
   private val failedTests = new scala.collection.mutable.ListBuffer[TestCase]
+  private val passedTests = new scala.collection.mutable.ListBuffer[TestCase]
 
   private[this] var passed = 0
 
@@ -39,7 +43,7 @@ final class DefaultContext(val rootOutDirectory: String) extends TestContext {
     failedTests += test
 
   def reportPassed(test: TestCase): Unit =
-    passed += 1
+  passedTests += test
 
   def echo(msg: String): Unit = println(msg)
 
@@ -48,6 +52,7 @@ final class DefaultContext(val rootOutDirectory: String) extends TestContext {
   /** Both echoes the summary to stdout and prints to file */
   def echoSummary(): Unit = {
     val failed = failedTests.size
+    val passed = passedTests.size
 
     println(
       s"""|
@@ -66,4 +71,6 @@ final class DefaultContext(val rootOutDirectory: String) extends TestContext {
       println(s"          log file: $log")
     }
   }
+
+  def cleanup: Unit = ()
 }

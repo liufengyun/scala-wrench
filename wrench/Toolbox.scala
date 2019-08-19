@@ -1,7 +1,7 @@
 package org.xmid
 package wrench
 
-import java.io.{File => JFile, PrintWriter }
+import java.io.{File => JFile, PrintWriter, FileWriter, BufferedWriter }
 import java.util.HashMap
 import scala.io.Source
 import scala.collection.JavaConversions._
@@ -14,7 +14,9 @@ import dotc.reporting._
 
 object Toolbox {
   def compile(files: List[JFile], flags: TestFlags, log: JFile): Reporter = {
-    val ps = new PrintWriter(log)
+    val fw: FileWriter = new FileWriter(log, /* append = */ true)
+    val bw: BufferedWriter = new BufferedWriter(fw)
+    val ps = new PrintWriter(bw)
     val reporter = new ConsoleReporter(writer = ps)
     val driver = new Driver
     driver.process(flags.all ++ files.map(_.getPath), reporter = reporter)

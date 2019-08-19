@@ -26,5 +26,8 @@ class Tests {
 
 object Tests {
   implicit val testCtx: TestContext = new DefaultContext(Defaults.rootOutputDir)
-  @AfterClass def cleanup(): Unit = testCtx.echoSummary()
+  @AfterClass def cleanup(): Unit = {
+    testCtx.echoSummary()
+    testCtx.cleanup
+  }
 }
