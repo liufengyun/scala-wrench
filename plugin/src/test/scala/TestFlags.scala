@@ -42,6 +42,4 @@ final case class TestFlags(
 object TestFlags {
   def apply(classPath: String, options: Map[String, String]): TestFlags =
     TestFlags(classPath, classPath, options)
-
-  val defaultOutputDir = "out" + JFile.separator
 }

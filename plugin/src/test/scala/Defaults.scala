@@ -3,7 +3,8 @@ package test
 
 import java.io.File
 
-object TestConfiguration {
+object Defaults {
+  val rootOutputDir = "out" + File.separator
 
   val noCheckOptions = Map(
     "-pagewidth" -> "120",

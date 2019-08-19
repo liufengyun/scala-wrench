@@ -16,7 +16,7 @@ final case class CompileInput(name: String, flags: TestFlags, targetDir: JFile, 
 object CompileInput {
   private def outDir(file: JFile): JFile =
     new JFile(
-      TestFlags.defaultOutputDir + JFile.separator +
+      Defaults.rootOutputDir + JFile.separator +
         file.getName.replaceFirst("[.][^.]+$", "") + JFile.separator
     )
 
