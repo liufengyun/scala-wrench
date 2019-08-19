@@ -4,7 +4,7 @@ package test
 import java.io.{File => JFile}
 
 final case class TestFlags(
-  defaultClassPath: String,
+  classPath: String,
   runClassPath: String, // class path that is used when running `run` tests (not compiling)
   options: Map[String, String]) { // only valid compiler options can be stored directly in `options`
 
@@ -21,12 +21,12 @@ final case class TestFlags(
     copy(options = options -- flags)
 
   def withClasspath(classPath: String): TestFlags =
-    copy(defaultClassPath = s"$defaultClassPath${JFile.pathSeparator}$classPath")
+    copy(classPath = s"$classPath${JFile.pathSeparator}$classPath")
 
   def withRunClasspath(classPath: String): TestFlags =
     copy(runClassPath = s"$runClassPath${JFile.pathSeparator}$classPath")
 
-  def all: Array[String] = Array("-classpath", defaultClassPath) ++ options.flatMap { (k, v) =>
+  def all: Array[String] = Array("-classpath", classPath) ++ options.flatMap { (k, v) =>
     if (v.length == 0) Array(k) else Array(k, v)
   }
 
