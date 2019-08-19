@@ -19,6 +19,12 @@ trait SummaryReporting {
   /** Add the name of the failed test */
   def reportFailed(test: String): Unit
 
+  /** Print message */
+  def echo(msg: String): Unit
+
+  /** Print error message */
+  def error(msg: String): Unit
+
   /** Echo the summary report to the appropriate locations */
   def echoSummary(): Unit
 }
@@ -40,6 +46,8 @@ final class SummaryReport extends SummaryReporting {
     passed += 1
 
   def echo(msg: String): Unit = println(msg)
+
+  def error(msg: String): Unit = println("[error] " + msg)
 
   /** Both echoes the summary to stdout and prints to file */
   def echoSummary(): Unit = {

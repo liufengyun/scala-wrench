@@ -12,9 +12,7 @@ import dotc.interfaces.Diagnostic.ERROR
 import dotc.reporting.diagnostic.MessageContainer
 
 object Toolbox {
-  def compile(files: Array[JFile], flags0: TestFlags, suppressErrors: Boolean, targetDir: JFile): TestReporter = {
-    val flags = flags0.and("-d", targetDir.getPath).withClasspath(targetDir.getPath)
-
+  def compile(files: List[JFile], flags: TestFlags, suppressErrors: Boolean = false): TestReporter = {
     val reporter =
       TestReporter.reporter(
         System.out,
@@ -29,7 +27,7 @@ object Toolbox {
   }
 
   // We collect these in a map `"file:row" -> numberOfErrors`
-  def getErrorMapAndExpectedCount(files: Seq[JFile]): HashMap[String, Integer] = {
+  private def getErrorMapAndExpectedCount(files: Seq[JFile]): HashMap[String, Integer] = {
     val errorMap = new HashMap[String, Integer]()
     files.filter(_.getName.endsWith(".scala")).foreach { file =>
       Source.fromFile(file, "UTF-8").getLines().zipWithIndex.foreach { case (line, lineNbr) =>
@@ -42,8 +40,11 @@ object Toolbox {
     errorMap
   }
 
-  def check(errorMap: HashMap[String, Integer], reporterErrors: Iterator[MessageContainer], fail: String => Unit) = {
+  def checkErros(files: Seq[JFile], reporterErrors: Iterator[MessageContainer])(fail: String => Unit) = {
     import scala.language.implicitConversions
+
+    val errorMap: HashMap[String, Integer] = getErrorMapAndExpectedCount(files)
+
     reporterErrors.foreach { error =>
       if (error.pos.exists) {
         def toRelative(path: String): String = path.split("/").dropWhile(_ != "tests").mkString("/")
