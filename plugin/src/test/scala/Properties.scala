@@ -5,11 +5,7 @@ import java.nio.file._
 
 /** Runtime properties from defines or environmnent */
 object Properties {
-  /** Are we running on the Drone CI? */
-  val isRunByDrone: Boolean = sys.env.isDefinedAt("DRONE")
-
-  /** Filter out tests not matching the regex supplied by "filter"
-   *  define
+  /** Filter out tests not matching the regex supplied by "filter" define
    */
   val testsFilter: Option[String] = sys.props.get("filter")
 

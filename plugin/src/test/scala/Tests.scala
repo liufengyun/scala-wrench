@@ -9,13 +9,19 @@ import DSL._
 class Tests {
   import Tests._
 
-  implicit val flags: TestFlags = Defaults.defaultOptions.and("-fatal-warnings")
+  implicit val flags: TestFlags = Defaults.defaultOptions.and("-Xfatal-warnings")
 
   @Test
-  def initPosTests = filesInDir("tests/init/pos").compile.shouldSucceed
+  def posTests = filesInDir("tests/pos").compile.shouldSucceed
 
   @Test
-  def initNegTests = filesInDir("tests/init/neg").compile.shouldFail
+  def negTests = filesInDir("tests/neg").compile.shouldFail
+
+  @Test
+  def initPosTests = ()
+
+  @Test
+  def initNegTests = ()
 }
 
 object Tests {
