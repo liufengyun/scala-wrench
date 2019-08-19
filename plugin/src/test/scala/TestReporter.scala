@@ -16,7 +16,7 @@ import dotty.tools.dotc.reporting.diagnostic.messages._
 import dotty.tools.dotc.interfaces.Diagnostic.{ ERROR, WARNING, INFO }
 
 class TestReporter protected (outWriter: PrintWriter, logLevel: Int)
-extends Reporter with MessageRendering {
+extends Reporter with UniqueMessagePositions with MessageRendering {
   import MessageContainer._
 
   protected final val _errorBuf = mutable.ArrayBuffer.empty[MessageContainer]

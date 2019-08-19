@@ -1,0 +1,1 @@
+def foo = println("hello, world!" + a)  // error

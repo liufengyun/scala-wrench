@@ -4,8 +4,9 @@ package test
 import java.io.{File => JFile}
 
 final case class TestFlags(
-  classPath: String,
-  runClassPath: String, // class path that is used when running `run` tests (not compiling)
+  classPath: List[String],
+  runClassPath: List[String], // class path that is used when running `run` tests (not compiling)
+  pluginPath: List[String],
   options: Map[String, String]) { // only valid compiler options can be stored directly in `options`
 
   def and(flag: String): TestFlags =
@@ -20,15 +21,29 @@ final case class TestFlags(
   def without(flags: String*): TestFlags =
     copy(options = options -- flags)
 
-  def withClasspath(classPath: String): TestFlags =
-    copy(classPath = s"$classPath${JFile.pathSeparator}$classPath")
+  def withClassPath(path: String): TestFlags =
+    copy(classPath = path :: this.classPath)
 
-  def withRunClasspath(classPath: String): TestFlags =
-    copy(runClassPath = s"$runClassPath${JFile.pathSeparator}$classPath")
+  def withClassPath(path: List[String]): TestFlags =
+    copy(classPath = path ++ this.classPath)
 
-  def all: Array[String] = Array("-classpath", classPath) ++ options.flatMap { (k, v) =>
-    if (v.length == 0) Array(k) else Array(k, v)
-  }
+  def withPluginPath(path: String): TestFlags =
+    copy(pluginPath = path :: this.pluginPath)
+
+  def withPluginPath(path: List[String]): TestFlags =
+    copy(pluginPath = path ++ this.pluginPath)
+
+  def withRunClassPath(path: String): TestFlags =
+    copy(runClassPath = path :: this.runClassPath)
+
+  def withRunClassPath(path: List[String]): TestFlags =
+    copy(runClassPath = path ++ this.runClassPath)
+
+  def all: Array[String] =
+    Array("-classpath", classPath.mkString(JFile.pathSeparator)) ++
+      options.flatMap { (k, v) =>
+        if (v.length == 0) Array(k) else Array(k, v)
+      }
 
   /** Subset of the flags that should be passed to javac. */
   def javacFlags: Array[String] = {
@@ -40,6 +55,6 @@ final case class TestFlags(
 }
 
 object TestFlags {
-  def apply(classPath: String, options: Map[String, String]): TestFlags =
-    TestFlags(classPath, classPath, options)
+  def apply(classPath: List[String], options: Map[String, String]): TestFlags =
+    TestFlags(classPath, classPath, Nil, options)
 }

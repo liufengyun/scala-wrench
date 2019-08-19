@@ -13,6 +13,9 @@ object Properties {
    */
   val testsFilter: Option[String] = sys.props.get("filter")
 
+  /** plugin jar */
+  val plugin: Option[String] = sys.props.get("plugin")
+
   /** dotty-interfaces jar */
   def dottyInterfaces: String = sys.props("dottyInterfaces")
 

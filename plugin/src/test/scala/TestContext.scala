@@ -56,6 +56,6 @@ final class DefaultContext extends TestContext {
           |""".stripMargin
     )
 
-    failedTests.map(x => s"    $x\n").foreach(println)
+    failedTests.map(x => s"    $x").foreach(println)
   }
 }
