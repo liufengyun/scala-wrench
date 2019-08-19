@@ -4,15 +4,11 @@ package test
 import scala.collection.mutable
 import scala.language.implicitConversions
 
-/** `SummaryReporting` can be used by unit tests by utilizing `@AfterClass` to
+/** `TestContext` can be used by unit tests by utilizing `@AfterClass` to
  *  call `echoSummary`
  *
- *  This is used in vulpix by passing the companion object's `SummaryReporting`
- *  to each test, the `@AfterClass def` then calls the `SummaryReport`'s
- *  `echoSummary` method in order to dump the summary to both stdout and a log
- *  file
  */
-trait SummaryReporting {
+trait TestContext {
   /** Report a test as passing */
   def reportPassed(test: String): Unit
 
@@ -29,7 +25,7 @@ trait SummaryReporting {
   def echoSummary(): Unit
 }
 
-final class SummaryReport extends SummaryReporting {
+final class DefaultContext extends TestContext {
   import scala.collection.JavaConverters._
 
   private val failedTests = new scala.collection.mutable.ListBuffer[String]

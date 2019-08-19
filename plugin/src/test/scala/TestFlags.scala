@@ -14,6 +14,9 @@ final case class TestFlags(
   def and(flag: String, value: String): TestFlags =
     copy(options = options + (flag -> value))
 
+  def and(pairs: Tuple2[String, String]*): TestFlags =
+    copy(options = options ++ pairs)
+
   def without(flags: String*): TestFlags =
     copy(options = options -- flags)
 
@@ -37,7 +40,8 @@ final case class TestFlags(
 }
 
 object TestFlags {
-  def apply(classPath: String): TestFlags = TestFlags(classPath, classPath, Map.empty)
+  def apply(classPath: String, options: Map[String, String]): TestFlags =
+    TestFlags(classPath, classPath, options)
 
   val defaultOutputDir = "out" + JFile.separator
 }
