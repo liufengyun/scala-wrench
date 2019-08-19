@@ -1,5 +1,4 @@
-package org.scalaverify
-package test
+package org.scalawrench
 
 import java.io.{File => JFile}
 import dotty.tools.dotc.reporting.Reporter

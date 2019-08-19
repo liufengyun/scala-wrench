@@ -4,7 +4,7 @@ package test
 import org.junit.{ Test, BeforeClass, AfterClass }
 import org.junit.Assert._
 
-import DSL._
+import org.scalawrench._
 
 class Tests {
   import Tests._
@@ -25,6 +25,6 @@ class Tests {
 }
 
 object Tests {
-  implicit val testCtx: TestContext = new DefaultContext
+  implicit val testCtx: TestContext = new DefaultContext(Defaults.rootOutputDir)
   @AfterClass def cleanup(): Unit = testCtx.echoSummary()
 }

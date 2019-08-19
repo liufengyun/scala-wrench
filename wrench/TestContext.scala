@@ -1,5 +1,4 @@
-package org.scalaverify
-package test
+package org.scalawrench
 
 import scala.collection.mutable
 import scala.language.implicitConversions
@@ -23,9 +22,12 @@ trait TestContext {
 
   /** Echo the summary report to the appropriate locations */
   def echoSummary(): Unit
+
+  /** The root directory for compile output */
+  def rootOutDirectory: String
 }
 
-final class DefaultContext extends TestContext {
+final class DefaultContext(val rootOutDirectory: String) extends TestContext {
   import scala.collection.JavaConverters._
 
   private val failedTests = new scala.collection.mutable.ListBuffer[TestCase]

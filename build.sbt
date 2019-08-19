@@ -38,9 +38,13 @@ lazy val plugin: Project = project
       )
     }
   )
+  .dependsOn(wrench % Test)
 
-lazy val app = project
-  .in(file("app"))
+lazy val wrench = project
+  .in(file("wrench"))
   .settings(
+    name := "scala-wrench",
+    version := "0.0.1",
+    organization := "org.scalawrench",
     scalaVersion := dottyVersion
   )

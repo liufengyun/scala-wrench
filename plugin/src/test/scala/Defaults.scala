@@ -3,6 +3,8 @@ package test
 
 import java.io.File
 
+import org.scalawrench._
+
 object Defaults {
   val rootOutputDir = "out" + File.separator
 

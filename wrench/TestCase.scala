@@ -1,5 +1,4 @@
-package org.scalaverify
-package test
+package org.scalawrench
 
 import java.io.{File => JFile}
 
@@ -14,16 +13,16 @@ final case class TestCase(name: String, flags: TestFlags, targetDir: JFile, file
 }
 
 object TestCase {
-  private def outDir(file: JFile): JFile =
+  private def outDir(file: JFile)(implicit ctx: TestContext): JFile =
     new JFile(
-      Defaults.rootOutputDir + JFile.separator +
+      ctx.rootOutDirectory + JFile.separator +
         file.getName.replaceFirst("[.][^.]+$", "") + JFile.separator
     )
 
   private def logFile(file: JFile): JFile = new JFile(file.getAbsolutePath() + ".out")
 
   /** A single file from the string path `f` using the supplied flags */
-  def file(f: String)(implicit flags: TestFlags): TestCase = {
+  def file(f: String)(implicit flags: TestFlags, ctx: TestContext): TestCase = {
     val sourceFile = new JFile(f)
     assert(sourceFile.exists(), s"the file ${sourceFile.getAbsolutePath()} does not exist")
     TestCase(f, flags, outDir(sourceFile), sourceFile :: Nil, logFile((sourceFile)))
@@ -33,7 +32,7 @@ object TestCase {
    *  deep compilation, that is - it compiles all files and subdirectories
    *  contained within the directory `f`.
    */
-  def directory(dir: String, recursive: Boolean = true)(implicit flags: TestFlags): TestCase = {
+  def directory(dir: String, recursive: Boolean = true)(implicit flags: TestFlags, ctx: TestContext): TestCase = {
     val sourceDir = new JFile(dir)
 
     assert(sourceDir.exists(), s"the directory ${sourceDir.getAbsolutePath()} does not exist")
@@ -61,7 +60,7 @@ object TestCase {
    *  - Directories can have an associated check-file, where the check file has
    *    the same name as the directory (with the file extension `.check`)
    */
-  def filesInDir(dir: String)(implicit flags: TestFlags): List[TestCase] = {
+  def filesInDir(dir: String)(implicit flags: TestFlags, ctx: TestContext): List[TestCase] = {
     val f = new JFile(dir)
     assert(f.exists(), "the directory " + f.getAbsolutePath + " does not exist")
     f.listFiles.foldLeft(List.empty[TestCase]) { case (inputs, f) =>

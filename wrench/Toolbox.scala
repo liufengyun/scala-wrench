@@ -1,5 +1,4 @@
-package org.scalaverify
-package test
+package org.scalawrench
 
 import java.io.{File => JFile, PrintWriter }
 import java.util.HashMap
