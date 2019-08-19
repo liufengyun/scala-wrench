@@ -48,3 +48,4 @@ classes/
 .idea_modules
 /.worksheet/
 
+*.out

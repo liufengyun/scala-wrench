@@ -10,10 +10,10 @@ import scala.language.implicitConversions
  */
 trait TestContext {
   /** Report a test as passing */
-  def reportPassed(test: String): Unit
+  def reportPassed(test: TestCase): Unit
 
   /** Add the name of the failed test */
-  def reportFailed(test: String): Unit
+  def reportFailed(test: TestCase): Unit
 
   /** Print message */
   def echo(msg: String): Unit
@@ -28,14 +28,14 @@ trait TestContext {
 final class DefaultContext extends TestContext {
   import scala.collection.JavaConverters._
 
-  private val failedTests = new scala.collection.mutable.ListBuffer[String]
+  private val failedTests = new scala.collection.mutable.ListBuffer[TestCase]
 
   private[this] var passed = 0
 
-  def reportFailed(test: String): Unit =
+  def reportFailed(test: TestCase): Unit =
     failedTests += test
 
-  def reportPassed(test: String): Unit =
+  def reportPassed(test: TestCase): Unit =
     passed += 1
 
   def echo(msg: String): Unit = println(msg)
@@ -56,6 +56,11 @@ final class DefaultContext extends TestContext {
           |""".stripMargin
     )
 
-    failedTests.map(x => s"    $x").foreach(println)
+    failedTests.foreach { input =>
+      val name = input.name
+      val log = input.log.getPath
+      println(s"    $name")
+      println(s"          log file: $log")
+    }
   }
 }

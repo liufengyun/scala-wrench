@@ -1,7 +1,7 @@
 package org.scalaverify
 package test
 
-import java.io.{File => JFile}
+import java.io.{File => JFile, PrintWriter }
 import java.util.HashMap
 import scala.io.Source
 import scala.collection.JavaConversions._
@@ -10,19 +10,14 @@ import dotty.tools._
 import dotc.Driver
 import dotc.interfaces.Diagnostic.ERROR
 import dotc.reporting.diagnostic.MessageContainer
+import dotc.reporting._
 
 object Toolbox {
-  def compile(files: List[JFile], flags: TestFlags, suppressErrors: Boolean = false): TestReporter = {
-    val reporter =
-      TestReporter.reporter(
-        System.out,
-        logLevel = if (suppressErrors) ERROR + 1 else ERROR
-      )
-
+  def compile(files: List[JFile], flags: TestFlags, log: JFile): Reporter = {
+    val ps = new PrintWriter(log)
+    val reporter = new ConsoleReporter(writer = ps)
     val driver = new Driver
-
     driver.process(flags.all ++ files.map(_.getPath), reporter = reporter)
-
     reporter
   }
 
@@ -40,7 +35,7 @@ object Toolbox {
     errorMap
   }
 
-  def checkErros(files: Seq[JFile], reporterErrors: Iterator[MessageContainer])(fail: String => Unit) = {
+  def checkErros(files: Seq[JFile], reporterErrors: List[MessageContainer])(fail: String => Unit) = {
     import scala.language.implicitConversions
 
     val errorMap: HashMap[String, Integer] = getErrorMapAndExpectedCount(files)
