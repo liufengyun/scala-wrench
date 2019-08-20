@@ -9,7 +9,7 @@ final case class CompileOutput(input: TestCase, errors: List[MessageContainer]) 
   def shouldFail(implicit ctx: TestContext): Unit = {
     ctx.echo("tesing " + input.name)
     var failed: Boolean = false
-    Toolbox.checkErros(input.files, errors) { msg =>
+    Toolbox.checkErrors(input.sources, errors) { msg =>
       ctx.error(msg)
       failed = true
     }

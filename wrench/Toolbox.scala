@@ -1,8 +1,11 @@
 package org.xmid
 package wrench
 
-import java.io.{File => JFile, PrintWriter, FileWriter, BufferedWriter }
+import java.io.{File => JFile, PrintWriter, FileWriter, BufferedWriter, BufferedReader, InputStreamReader }
+import java.nio.file.Paths
 import java.util.HashMap
+import java.time.Duration
+
 import scala.io.Source
 import scala.collection.JavaConversions._
 
@@ -11,6 +14,7 @@ import dotc.Driver
 import dotc.interfaces.Diagnostic.ERROR
 import dotc.reporting.diagnostic.MessageContainer
 import dotc.reporting._
+
 
 object Toolbox {
   def compile(files: List[JFile], flags: TestFlags, log: JFile): Reporter = {
@@ -37,7 +41,7 @@ object Toolbox {
     errorMap
   }
 
-  def checkErros(files: Seq[JFile], reporterErrors: List[MessageContainer])(fail: String => Unit) = {
+  def checkErrors(files: Seq[JFile], reporterErrors: List[MessageContainer])(fail: String => Unit) = {
     import scala.language.implicitConversions
 
     val errorMap: HashMap[String, Integer] = getErrorMapAndExpectedCount(files)
@@ -62,5 +66,28 @@ object Toolbox {
     errorMap.foreach { case (k, v) =>
       if (v != 0) fail("Fewer errors reported at " + k + ", expect " + v + " more")
     }
+  }
+
+  /** Run the main class with the given classpath for the given duration (milliseconds) */
+  def run(cp: List[String], mainClass: String, duration: Int): (Int, String) = {
+    val javaBin = Paths.get(sys.props("java.home"), "bin", "java").toString
+    val process = new ProcessBuilder(javaBin, "-Dfile.encoding=UTF-8", "-Xmx1g", "-cp", cp.mkString(JFile.pathSeparator), mainClass)
+      .redirectErrorStream(true)
+      .redirectInput(ProcessBuilder.Redirect.PIPE)
+      .redirectOutput(ProcessBuilder.Redirect.PIPE)
+      .start()
+
+    var childStdout: BufferedReader = new BufferedReader(new InputStreamReader(process.getInputStream, "UTF-8"))
+
+    val sb = new StringBuilder
+
+    var start = System.currentTimeMillis
+    var line: String = childStdout.readLine()
+    while (process.isAlive && (System.currentTimeMillis - start) < duration) {
+      sb.append(line).append(System.lineSeparator)
+      line = childStdout.readLine()
+    }
+
+    (process.exitValue, sb.toString)
   }
 }

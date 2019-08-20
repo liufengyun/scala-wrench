@@ -3,7 +3,29 @@ package wrench
 
 import java.io.{File => JFile}
 
-final case class TestCase(name: String, flags: TestFlags, targetDir: JFile, files: List[JFile], log: JFile, groupable: Boolean) {
+trait TestCase {
+  def name: String
+  def log: JFile
+  def sources: List[JFile]
+
+  def compile: CompileOutput
+}
+
+case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: JFile, log: JFile) extends TestCase {
+  def sources: List[JFile] = file :: Nil
+
+  def compile: CompileOutput = {
+    val out = targetDir.getAbsolutePath()
+    val flags2 = flags.and("-d", out).withClassPath(out)
+    targetDir.mkdirs()
+
+    val reporter = Toolbox.compile(file :: Nil, flags2, log)
+    targetDir.deleteRecursive()
+    CompileOutput(this, reporter.allErrors)
+  }
+}
+
+case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, targetDir: JFile, sources: List[JFile], log: JFile, groupable: Boolean) extends TestCase {
   def compile: CompileOutput = {
     val out = targetDir.getAbsolutePath()
     val flags2 = flags.and("-d", out).withClassPath(out)
@@ -18,8 +40,8 @@ final case class TestCase(name: String, flags: TestFlags, targetDir: JFile, file
       }
     }
 
-    if (groupable && files.forall(endsWithNum)) {
-      val batches = files.groupBy[Int] { file =>
+    if (groupable && sources.forall(endsWithNum)) {
+      val batches = sources.groupBy[Int] { file =>
         val name = file.getName().withoutExtension
         name.substring(name.lastIndexOf('_') + 1, name.length).toInt
       }.toList.sortBy(_._1).map(_._2)
@@ -32,7 +54,7 @@ final case class TestCase(name: String, flags: TestFlags, targetDir: JFile, file
       CompileOutput(this, errors)
     }
     else {
-      val reporter = Toolbox.compile(files, flags2, log)
+      val reporter = Toolbox.compile(sources, flags2, log)
       targetDir.deleteRecursive()
       CompileOutput(this, reporter.allErrors)
     }
@@ -52,7 +74,7 @@ object TestCase {
   def file(f: String)(implicit flags: TestFlags, ctx: TestContext): TestCase = {
     val sourceFile = new JFile(f)
     assert(sourceFile.exists(), s"the file ${sourceFile.getAbsolutePath()} does not exist")
-    TestCase(f, flags, outDir(sourceFile), sourceFile :: Nil, logFile((sourceFile)), groupable = false)
+    FileTestCase(f, flags, outDir(sourceFile), sourceFile, logFile((sourceFile)))
   }
 
   /** A directory `f` using the supplied `flags`. This method does
@@ -73,7 +95,7 @@ object TestCase {
 
     val sortedFiles = flatten(sourceDir).sorted
 
-    TestCase(dir, flags, outDir(sourceDir), sortedFiles, logFile(sourceDir), groupable = !recursive)
+    DirectoryTestCase(dir, sourceDir, flags, outDir(sourceDir), sortedFiles, logFile(sourceDir), groupable = !recursive)
   }
 
   /** This function creates a list of TestCase for the files and folders
