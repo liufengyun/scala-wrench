@@ -3,31 +3,68 @@ package wrench
 
 import java.io.{File => JFile}
 
+import dotty.tools.dotc.reporting.diagnostic.MessageContainer
+
 trait TestCase {
   def name: String
-  def log: JFile
   def sources: List[JFile]
+  def runCheckFile: Option[JFile]
+  def targetDir: JFile
+  def compileLogPath: String
+  def runLogPath: String
 
-  def compile: CompileOutput
-}
+  def compile(implicit ctx: TestContext): CompileOutput
+  def run(implicit ctx: TestContext): RunOutput
 
-case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: JFile, log: JFile) extends TestCase {
-  def sources: List[JFile] = file :: Nil
-
-  def compile: CompileOutput = {
-    val out = targetDir.getAbsolutePath()
-    val flags2 = flags.and("-d", out).withClassPath(out)
-    targetDir.mkdirs()
-
-    val reporter = Toolbox.compile(file :: Nil, flags2, log)
+  def cleanup: Unit = {
     targetDir.deleteRecursive()
-    CompileOutput(this, reporter.allErrors)
   }
 }
 
-case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, targetDir: JFile, sources: List[JFile], log: JFile, groupable: Boolean) extends TestCase {
-  def compile: CompileOutput = {
-    val out = targetDir.getAbsolutePath()
+case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: JFile) extends TestCase {
+  private val out = targetDir.getAbsolutePath()
+
+  val sources: List[JFile] = file :: Nil
+
+  lazy val compileLogPath = file.getAbsolutePath() + ".out"
+  lazy val runLogPath = file.ofExtension(".check").getAbsolutePath + ".out"
+
+  lazy val runCheckFile: Option[JFile] = {
+    val checkFile = file.ofExtension(".check")
+    if (checkFile.exists()) Some(checkFile)
+    else None
+  }
+
+  def compile(implicit ctx: TestContext): CompileOutput = {
+    ctx.echo("compiling " + this.name)
+    val flags2 = flags.and("-d", out).withClassPath(out)
+    targetDir.mkdirs()
+
+    val (reporter, output) = Toolbox.compile(file :: Nil, flags2)
+    CompileOutput(this, output, reporter.allErrors)
+  }
+
+  def run(implicit ctx: TestContext): RunOutput = {
+    ctx.echo("running " + this.name)
+    val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", 2000)
+    RunOutput(this, exitCode, output)
+  }
+}
+
+case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, targetDir: JFile, sources: List[JFile], groupable: Boolean) extends TestCase {
+  private val out = targetDir.getAbsolutePath()
+
+  lazy val compileLogPath = new JFile(sourceDir, sourceDir.getName() + ".check.out").getAbsolutePath()
+  lazy val runLogPath = new JFile(sourceDir, sourceDir.getName() + ".out").getAbsolutePath()
+
+  lazy val runCheckFile: Option[JFile] = {
+    val checkFile = new JFile(sourceDir, sourceDir.getName() + ".check")
+    if (checkFile.exists()) Some(checkFile)
+    else None
+  }
+
+  def compile(implicit ctx: TestContext): CompileOutput = {
+    ctx.echo("compiling " + this.name)
     val flags2 = flags.and("-d", out).withClassPath(out)
     targetDir.mkdirs()
 
@@ -46,18 +83,24 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
         name.substring(name.lastIndexOf('_') + 1, name.length).toInt
       }.toList.sortBy(_._1).map(_._2)
 
+      val sb: StringBuilder = new StringBuilder
       val errors = batches.flatMap { batch =>
-        val reporter = Toolbox.compile(batch, flags2, log)
+        val (reporter, output) = Toolbox.compile(batch, flags2)
+        sb ++= output
         reporter.allErrors
       }
-      targetDir.deleteRecursive()
-      CompileOutput(this, errors)
+      CompileOutput(this, sb.mkString, errors)
     }
     else {
-      val reporter = Toolbox.compile(sources, flags2, log)
-      targetDir.deleteRecursive()
-      CompileOutput(this, reporter.allErrors)
+      val (reporter, output) = Toolbox.compile(sources, flags2)
+      CompileOutput(this, output, reporter.allErrors)
     }
+  }
+
+  def run(implicit ctx: TestContext): RunOutput = {
+    ctx.echo("running " + this.name)
+    val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", 2000)
+    RunOutput(this, exitCode, output)
   }
 }
 
@@ -68,13 +111,11 @@ object TestCase {
         file.getName.withoutExtension + JFile.separator
     )
 
-  private def logFile(file: JFile): JFile = new JFile(file.getAbsolutePath() + ".out").ensureFresh()
-
   /** A single file from the string path `f` using the supplied flags */
   def file(f: String)(implicit flags: TestFlags, ctx: TestContext): TestCase = {
     val sourceFile = new JFile(f)
     assert(sourceFile.exists(), s"the file ${sourceFile.getAbsolutePath()} does not exist")
-    FileTestCase(f, flags, outDir(sourceFile), sourceFile, logFile((sourceFile)))
+    FileTestCase(f, flags, outDir(sourceFile), sourceFile)
   }
 
   /** A directory `f` using the supplied `flags`. This method does
@@ -89,13 +130,16 @@ object TestCase {
     def flatten(f: JFile): List[JFile] =
       if (f.isDirectory) {
         val files = f.listFiles.toList
-        if (recursive) files.flatMap(flatten) else files
+        if (recursive) files.flatMap(flatten)
+        else files.filter(_.isScalaOrJava)
       }
-      else List(f)
+      else if (f.isScalaOrJava)
+        List(f)
+      else Nil
 
     val sortedFiles = flatten(sourceDir).sorted
 
-    DirectoryTestCase(dir, sourceDir, flags, outDir(sourceDir), sortedFiles, logFile(sourceDir), groupable = !recursive)
+    DirectoryTestCase(dir, sourceDir, flags, outDir(sourceDir), sortedFiles, groupable = !recursive)
   }
 
   /** This function creates a list of TestCase for the files and folders
@@ -113,7 +157,7 @@ object TestCase {
     val f = new JFile(dir)
     assert(f.exists(), "the directory " + f.getAbsolutePath + " does not exist")
     f.listFiles.foldLeft(List.empty[TestCase]) { case (inputs, f) =>
-      if (f.getName().endsWith(".scala") || f.getName().endsWith(".java")) file(f.getPath) :: inputs
+      if (f.isScalaOrJava) file(f.getPath) :: inputs
       else if (f.isDirectory) directory(f.getPath, recursive = false) :: inputs
       else inputs
     }

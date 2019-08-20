@@ -12,10 +12,13 @@ class Tests {
   implicit val flags: TestFlags = Defaults.defaultOptions.and("-Xfatal-warnings")
 
   @Test
-  def posTests = filesInDir("tests/pos").compile.shouldSucceed
+  def posTests = filesInDir("tests/pos").shouldCompile
 
   @Test
-  def negTests = filesInDir("tests/neg").compile.shouldFail
+  def negTests = filesInDir("tests/neg").shouldNotCompile
+
+  @Test
+  def runTests = filesInDir("tests/run").shouldRun
 
   @Test
   def initPosTests = ()

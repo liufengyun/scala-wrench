@@ -5,23 +5,24 @@ import java.io.{File => JFile}
 import dotty.tools.dotc.reporting.diagnostic.MessageContainer
 
 
-final case class CompileOutput(input: TestCase, errors: List[MessageContainer]) {
-  def shouldFail(implicit ctx: TestContext): Unit = {
-    ctx.echo("tesing " + input.name)
-    var failed: Boolean = false
-    Toolbox.checkErrors(input.sources, errors) { msg =>
+final case class CompileOutput(test: TestCase, output: String, errors: List[MessageContainer]) {
+  def checkFailed(implicit ctx: TestContext): Boolean = {
+    var checkSuccess: Boolean = true
+    Toolbox.checkErrors(test.sources, errors) { msg =>
       ctx.error(msg)
-      failed = true
+      checkSuccess = false
     }
-    if (failed) ctx.reportFailed(input)
-    else ctx.reportPassed(input)
+    if (!checkSuccess) dumpLog
+    checkSuccess
   }
 
-  def shouldSucceed(implicit ctx: TestContext): Unit = {
-    ctx.echo("tesing " + input.name)
-    if (errors.nonEmpty) ctx.reportFailed(input)
-    else ctx.reportPassed(input)
+  private def dumpLog(implicit ctx: TestContext) = {
+    FileDiff.dump(test.compileLogPath, output.toLines)
+    ctx.error("Compile failed. Check log file for more detail: " + test.compileLogPath)
   }
 
-  // TODO: add `shouldRun`
+  def checkSucceeded(implicit ctx: TestContext): Boolean = {
+    if (!errors.isEmpty) dumpLog
+    errors.isEmpty
+  }
 }

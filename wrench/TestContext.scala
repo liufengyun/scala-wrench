@@ -31,7 +31,7 @@ trait TestContext {
   def cleanup: Unit
 }
 
-final class DefaultContext(val rootOutDirectory: String) extends TestContext {
+final class DefaultContext(val rootOutDirectory: String, val runTimeout: Int = 2000) extends TestContext {
   import scala.collection.JavaConverters._
 
   private val failedTests = new scala.collection.mutable.ListBuffer[TestCase]
@@ -66,9 +66,7 @@ final class DefaultContext(val rootOutDirectory: String) extends TestContext {
 
     failedTests.foreach { input =>
       val name = input.name
-      val log = input.log.getPath
       println(s"    $name")
-      println(s"          log file: $log")
     }
   }
 

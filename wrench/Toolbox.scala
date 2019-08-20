@@ -1,7 +1,7 @@
 package org.xmid
 package wrench
 
-import java.io.{File => JFile, PrintWriter, FileWriter, BufferedWriter, BufferedReader, InputStreamReader }
+import java.io.{File => JFile, PrintWriter, StringWriter, BufferedWriter, BufferedReader, InputStreamReader }
 import java.nio.file.Paths
 import java.util.HashMap
 import java.time.Duration
@@ -17,14 +17,14 @@ import dotc.reporting._
 
 
 object Toolbox {
-  def compile(files: List[JFile], flags: TestFlags, log: JFile): Reporter = {
-    val fw: FileWriter = new FileWriter(log, /* append = */ true)
-    val bw: BufferedWriter = new BufferedWriter(fw)
+  def compile(files: List[JFile], flags: TestFlags): (Reporter, String) = {
+    val sw: StringWriter = new StringWriter()
+    val bw: BufferedWriter = new BufferedWriter(sw)
     val ps = new PrintWriter(bw)
     val reporter = new ConsoleReporter(writer = ps)
     val driver = new Driver
     driver.process(flags.all ++ files.map(_.getPath), reporter = reporter)
-    reporter
+    (reporter, sw.toString)
   }
 
   // We collect these in a map `"file:row" -> numberOfErrors`

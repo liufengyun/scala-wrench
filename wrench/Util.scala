@@ -11,6 +11,8 @@ def (f: JFile) ensureFresh(): JFile = {
   f
 }
 
+def (f: JFile) ofExtension(ext: String): JFile =
+  new JFile(f.getAbsolutePath().withoutExtension + ext)
 
 def (f: JFile) deleteRecursive(): Unit =
   if (f.isDirectory) {
@@ -19,3 +21,8 @@ def (f: JFile) deleteRecursive(): Unit =
     f.delete
   }
   else f.delete()
+
+def (s: String) toLines: Seq[String] = s.split("\\r?\\n")
+
+def (f: JFile) isScalaOrJava: Boolean =
+  f.getName().endsWith(".scala") || f.getName().endsWith(".java")
