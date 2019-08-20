@@ -83,7 +83,7 @@ object Toolbox {
 
     var start = System.currentTimeMillis
     var line: String = childStdout.readLine()
-    while (process.isAlive && (System.currentTimeMillis - start) < duration) {
+    while (process.isAlive && (System.currentTimeMillis - start) < duration && line != null) {
       sb.append(line).append(System.lineSeparator)
       line = childStdout.readLine()
     }
