@@ -1,4 +1,4 @@
-* 🔧 WRENCH
+* 🔧 Scala-Wrench
 
 Wrench is a micro test framework for developing compiler plugins for
 [[https://github.com/lampepfl/dotty/][Dotty]].
@@ -7,7 +7,7 @@ It is supposed to make your life easier if
 
 - you are a PL researcher and want to write a plugin to demonstrate
   research result
-- you are a compiler hacker and want to write a plugin for production
+- you are a compiler hacker and want to write a solid plugin for production
   usage
 
 ** Usage
@@ -16,15 +16,15 @@ It is supposed to make your life easier if
 
 Add Wrench as a test dependency in SBT:
 
-#+BEGIN_EXAMPLE
+#+begin_src scala
         libraryDependencies += "xmid.org" % "scala-wrench" % "0.11" % "test"
-#+END_EXAMPLE
+#+end_src
 
 Also, set the option =fork= to =true=:
 
-#+BEGIN_EXAMPLE
+#+begin_src scala
         fork := true    // important
-#+END_EXAMPLE
+#+end_src
 
 Here is an example build file: [[./build.sbt][build.sbt]].
 
@@ -32,7 +32,7 @@ Here is an example build file: [[./build.sbt][build.sbt]].
 
 Now, you can specify the tests like the following:
 
-#+BEGIN_EXAMPLE
+#+begin_src scala
         class Tests {
             @Test def posTests = testsIn("tests/pos").shouldCompile
 
@@ -44,7 +44,7 @@ Now, you can specify the tests like the following:
                 testsIn("tests/plugins/divideZeroTests").shouldNotCompile
             }
         }
-#+END_EXAMPLE
+#+end_src
 
 Here is an example test file:
 [[./wrench/src/test/scala/Tests.scala][Tests.scala]]
