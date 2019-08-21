@@ -30,18 +30,15 @@ Now, you can specify the tests like the following:
 
 ```Scala
     class Tests {
-    @Test
-    def posTests = filesInDir("tests/pos").shouldCompile
+        @Test def posTests = filesInDir("tests/pos").shouldCompile
 
-    @Test
-    def negTests = filesInDir("tests/neg").shouldNotCompile
+        @Test def negTests = filesInDir("tests/neg").shouldNotCompile
 
-    @Test
-    def runTests = filesInDir("tests/run").shouldRun
+        @Test def runTests = filesInDir("tests/run").shouldRun
 
-    @Test
-    def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
-        filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
+        @Test def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
+            filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
+        }
     }
 ```
 
