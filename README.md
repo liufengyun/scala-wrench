@@ -42,7 +42,7 @@ Now, you can specify the tests like the following:
     }
 ```
 
-For details, please refer to the source file: [Tests.scla](./wrench/src/test/scala/Tests.scala)
+For details, please refer to the source file: [Tests.scala](./wrench/src/test/scala/Tests.scala)
 
 ## Credits
 
