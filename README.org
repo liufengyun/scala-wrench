@@ -1,0 +1,99 @@
+* 🔧 WRENCH
+
+Wrench is a micro test framework for developing compiler plugins for
+[[https://github.com/lampepfl/dotty/][Dotty]].
+
+It is supposed to make your life easier if
+
+- you are a PL researcher and want to write a plugin to demonstrate
+  research result
+- you are a compiler hacker and want to write a plugin for production
+  usage
+
+** Usage
+
+*** SBT setting
+
+Add Wrench as a test dependency in SBT:
+
+#+BEGIN_EXAMPLE
+        libraryDependencies += "xmid.org" % "scala-wrench" % "0.11" % "test"
+#+END_EXAMPLE
+
+Also, set the option =fork= to =true=:
+
+#+BEGIN_EXAMPLE
+        fork := true    // important
+#+END_EXAMPLE
+
+Here is an example build file: [[./build.sbt][build.sbt]].
+
+*** Writing tests
+
+Now, you can specify the tests like the following:
+
+#+BEGIN_EXAMPLE
+        class Tests {
+            @Test def posTests = filesInDir("tests/pos").shouldCompile
+
+            @Test def negTests = filesInDir("tests/neg").shouldNotCompile
+
+            @Test def runTests = filesInDir("tests/run").shouldRun
+
+            @Test def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
+                filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
+            }
+        }
+#+END_EXAMPLE
+
+Here is an example test file:
+[[./wrench/src/test/scala/Tests.scala][Tests.scala]]
+
+** DSL
+
+*** Test creation
+
+- =filesInDir("tests/pos")= ::
+  Create a list of test cases for each file or directory under =test/pos=.
+  Non Java or Scala files are ignored. Each sub-directory will be a directory
+  test case.
+
+- =file("tests/pos/hello.scala")= ::
+  Create a single file test case for the file =tests/pos/hello.scala=.
+
+- =directory("tests/pos/lib/")= ::
+  Create a directory test case for the path =tests/pos/lib/=.
+
+*** Assertions
+
+- =shouldCompile= ::
+  The test(s) should compile without errors.
+
+- =shouldNotCompile= ::
+  Compilation of the test(s) should produce errors as specified by `// error` in source code.
+
+- =shouldRun= ::
+  The test(s) should compile and run without errors.
+  If a check file is provided, the output of the run should be exactly
+  the same as the content of the check file.
+
+*** Plugins
+
+- =withPlugin(paths) { ... }= ::
+  First compile the plugins in =paths=,
+  then enable the plugins for all compilation in the body.
+
+- =withPluginBin(paths) { ... }= ::
+  Enable precompiled plugins in =paths=
+  for all compilations in the body.
+
+** Conventions
+
+*** Grouped compilation
+
+
+
+** Credits
+
+The code was adapted from the test framework for Dotty, which was
+initially developed by @felixmulder .
