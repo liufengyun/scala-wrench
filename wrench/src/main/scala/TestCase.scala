@@ -5,6 +5,7 @@ import java.io.{File => JFile}
 
 import dotty.tools.dotc.reporting.diagnostic.MessageContainer
 
+import wrench.Util._
 trait TestCase {
   def name: String
   def sources: List[JFile]
@@ -37,7 +38,7 @@ case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: 
 
   def compile(implicit ctx: TestContext): CompileOutput = {
     ctx.info("compiling " + this.name)
-    val flags2 = flags.and("-d", out).withClassPath(out)
+    val flags2 = flags.and("-d" -> out).withClassPath(out)
     targetDir.mkdirs()
 
     val (reporter, output) = Toolbox.compile(file :: Nil, flags2)
@@ -65,7 +66,7 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
 
   def compile(implicit ctx: TestContext): CompileOutput = {
     ctx.info("compiling " + this.name)
-    val flags2 = flags.and("-d", out).withClassPath(out)
+    val flags2 = flags.and("-d" -> out).withClassPath(out)
     targetDir.mkdirs()
 
     def endsWithNum(f: JFile): Boolean = {

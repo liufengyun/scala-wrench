@@ -3,6 +3,8 @@ package wrench
 
 import java.nio.file._
 
+import wrench.Util._
+
 /** Runtime properties from defines or environmnent */
 object Properties {
   private val classPath = sys.props("java.class.path").split(":")

@@ -12,9 +12,6 @@ final case class TestFlags(
   def and(flag: String): TestFlags =
     copy(options = options + (flag -> ""))
 
-  def and(flag: String, value: String): TestFlags =
-    copy(options = options + (flag -> value))
-
   def and(pairs: Tuple2[String, String]*): TestFlags =
     copy(options = options ++ pairs)
 

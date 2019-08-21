@@ -4,6 +4,8 @@ package wrench
 import java.io.{File => JFile}
 import java.nio.file._
 
+import wrench.Util._
+
 def file(f: String)(implicit flags: TestFlags): TestCase = TestCase.file(f)
 def directory(f: String)(implicit flags: TestFlags): TestCase = TestCase.directory(f)
 def filesInDir(f: String)(implicit flags: TestFlags): List[TestCase] = TestCase.filesInDir(f)

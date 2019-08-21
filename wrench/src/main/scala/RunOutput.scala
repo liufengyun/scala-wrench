@@ -3,6 +3,8 @@ package wrench
 
 import java.io.{File => JFile}
 
+import wrench.Util._
+
 final case class RunOutput(test: TestCase, exitCode: Int, output: String) {
   private[wrench] def checkSucceeded(implicit ctx: TestContext): Boolean = {
     if (exitCode != 0) {

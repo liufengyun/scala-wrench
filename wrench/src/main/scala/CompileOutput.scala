@@ -4,6 +4,7 @@ package wrench
 import java.io.{File => JFile}
 import dotty.tools.dotc.reporting.diagnostic.MessageContainer
 
+import wrench.Util._
 
 final case class CompileOutput(test: TestCase, output: String, errors: List[MessageContainer]) {
   private[wrench] def checkFailed(implicit ctx: TestContext): Boolean = {
