@@ -16,14 +16,14 @@ class Tests {
   def posTests = testsIn("tests/pos").shouldCompile
 
   @Test
-  def negTests = testsIn("tests/neg").shouldNotCompile
+  def negTests = testsIn("tests/neg").checkCompile
 
   @Test
   def runTests = testsIn("tests/run").shouldRun
 
   @Test
   def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
-    testsIn("tests/plugins/divideZeroTests").shouldNotCompile
+    testsIn("tests/plugins/divideZeroTests").checkCompile
   }
 }
 

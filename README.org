@@ -82,11 +82,20 @@ Here is an example test file:
 
 *** Assertions
 
-- =shouldCompile= ::
-  The test(s) should compile without errors.
+- =checkCompile= ::
+  Compilation of the test(s) should produce the same errors as specified
+  in source code. The errors should match code line as well numbers.
 
-- =shouldNotCompile= ::
-  Compilation of the test(s) should produce errors as specified by `// error` in source code.
+  You can annotate the source code with =// error= to indicate that a
+  compilation error is expected at the line. Multiple annotations at the
+  same line is supported by repeating =// error=.
+
+  If you want to check that a /warning/ (instead of an error) should happen
+  at a line, enable the compiler option =-Xfatal-warning=.
+
+- =shouldCompile= ::
+
+  The test(s) should compile without errors.
 
 - =shouldRun= ::
   The test(s) should compile and run without errors.

@@ -16,8 +16,8 @@ def (test: TestCase) shouldCompile(implicit ctx: TestContext): Unit = {
   test.cleanup
 }
 
-def (test: TestCase) shouldNotCompile(implicit ctx: TestContext): Unit = {
-  if (test.compile.checkFailed) ctx.passed(test)
+def (test: TestCase) checkCompile(implicit ctx: TestContext): Unit = {
+  if (test.compile.checkCompile) ctx.passed(test)
   else ctx.failed(test)
   test.cleanup
 }
@@ -29,7 +29,7 @@ def (test: TestCase) shouldRun(implicit ctx: TestContext): Unit = {
 }
 
 def (tests: List[TestCase]) shouldCompile(implicit ctx: TestContext): Unit = tests.map(_.shouldCompile)
-def (tests: List[TestCase]) shouldNotCompile(implicit ctx: TestContext): Unit = tests.map(_.shouldNotCompile)
+def (tests: List[TestCase]) checkCompile(implicit ctx: TestContext): Unit = tests.map(_.checkCompile)
 def (tests: List[TestCase]) shouldRun(implicit ctx: TestContext): Unit = tests.map(_.shouldRun)
 
 def withPlugin(paths: String*)(op: given TestFlags => Unit)(implicit flags: TestFlags, ctx: TestContext): Unit = {
