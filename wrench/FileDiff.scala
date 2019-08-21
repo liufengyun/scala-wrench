@@ -33,16 +33,4 @@ object FileDiff {
       write(content.mkString("", EOL, EOL))
       close
     }
-
-  def checkAndDump(sourceTitle: String, actualLines: Seq[String], checkFilePath: String): Boolean =
-    FileDiff.check(sourceTitle, actualLines, checkFilePath) match {
-      case Some(msg) =>
-        val outFilePath = checkFilePath + ".out"
-        FileDiff.dump(outFilePath, actualLines)
-        println(msg)
-        println(FileDiff.diffMessage(checkFilePath, outFilePath))
-        false
-      case _ =>
-        true
-    }
 }
