@@ -18,7 +18,9 @@ Add Wrench as a test dependency in SBT:
 
 Also, set the `fork` option to `true`:
 
+```Scala
     fork := true,    // important
+```
 
 The file [build.sbt](./build.sbt) can serve as an example.
 
@@ -27,20 +29,20 @@ The file [build.sbt](./build.sbt) can serve as an example.
 Now, you can specify the tests like the following:
 
 ```Scala
-class Tests {
-  @Test
-  def posTests = filesInDir("tests/pos").shouldCompile
+    class Tests {
+    @Test
+    def posTests = filesInDir("tests/pos").shouldCompile
 
-  @Test
-  def negTests = filesInDir("tests/neg").shouldNotCompile
+    @Test
+    def negTests = filesInDir("tests/neg").shouldNotCompile
 
-  @Test
-  def runTests = filesInDir("tests/run").shouldRun
+    @Test
+    def runTests = filesInDir("tests/run").shouldRun
 
-  @Test
-  def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
-    filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
-  }
+    @Test
+    def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
+        filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
+    }
 ```
 
 For details, please refer to the source file: [Tests.scla](./wrench/src/test/scala/Tests.scala)
@@ -48,5 +50,5 @@ For details, please refer to the source file: [Tests.scla](./wrench/src/test/sca
 ## Credits
 
 The code was adapted from the test framework for Dotty, which was initially
-developed by @felixmulder.
+developed by @felixmulder .
 
