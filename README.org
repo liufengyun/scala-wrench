@@ -34,14 +34,14 @@ Now, you can specify the tests like the following:
 
 #+BEGIN_EXAMPLE
         class Tests {
-            @Test def posTests = filesInDir("tests/pos").shouldCompile
+            @Test def posTests = testsIn("tests/pos").shouldCompile
 
-            @Test def negTests = filesInDir("tests/neg").shouldNotCompile
+            @Test def negTests = testsIn("tests/neg").shouldNotCompile
 
-            @Test def runTests = filesInDir("tests/run").shouldRun
+            @Test def runTests = testsIn("tests/run").shouldRun
 
             @Test def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
-                filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
+                testsIn("tests/plugins/divideZeroTests").shouldNotCompile
             }
         }
 #+END_EXAMPLE
@@ -51,18 +51,34 @@ Here is an example test file:
 
 ** DSL
 
-*** Test creation
-
-- =filesInDir("tests/pos")= ::
-  Create a list of test cases for each file or directory under =test/pos=.
-  Non Java or Scala files are ignored. Each sub-directory will be a directory
-  test case.
+*** Test Cases
 
 - =file("tests/pos/hello.scala")= ::
   Create a single file test case for the file =tests/pos/hello.scala=.
+  You can optionally put a check file `hello.check` inside
+  the same directory for run tests.
 
-- =directory("tests/pos/lib/")= ::
-  Create a directory test case for the path =tests/pos/lib/=.
+- =directory("tests/pos/lib")= ::
+  Create a directory test case for the path =tests/pos/lib=.
+  The directory may optionally contain a check file `lib.check` inside
+  the directory for run tests.
+
+  The source files in the directory may be compiled in batches. The batches
+  are recognized and ordered by file name endings. For example, given the
+  following files in the directory:
+
+  - A_1.scala
+  - B_1.scala
+  - C_2.scala
+  - D_2.scala
+
+  The files `A_1.scala` and `B_1.scala` will be compiled first, and the compiled
+  class files will be used to compile `C_2.scala` and `D_2.scala`.
+
+- =testsIn("tests/pos")= ::
+  Create a list of test cases for each file or directory under =test/pos=.
+  Non Java or Scala files are ignored. Each sub-directory will be a directory
+  test case.
 
 *** Assertions
 
@@ -86,12 +102,6 @@ Here is an example test file:
 - =withPluginBin(paths) { ... }= ::
   Enable precompiled plugins in =paths=
   for all compilations in the body.
-
-** Conventions
-
-*** Grouped compilation
-
-
 
 ** Credits
 

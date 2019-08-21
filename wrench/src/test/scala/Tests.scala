@@ -13,17 +13,17 @@ class Tests {
   implicit val flags: TestFlags = Defaults.defaultOptions.and("-Xfatal-warnings")
 
   @Test
-  def posTests = filesInDir("tests/pos").shouldCompile
+  def posTests = testsIn("tests/pos").shouldCompile
 
   @Test
-  def negTests = filesInDir("tests/neg").shouldNotCompile
+  def negTests = testsIn("tests/neg").shouldNotCompile
 
   @Test
-  def runTests = filesInDir("tests/run").shouldRun
+  def runTests = testsIn("tests/run").shouldRun
 
   @Test
   def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
-    filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
+    testsIn("tests/plugins/divideZeroTests").shouldNotCompile
   }
 }
 

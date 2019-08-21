@@ -150,7 +150,7 @@ object TestCase {
    *  - Directories can have an associated check-file, where the check file has
    *    the same name as the directory (with the file extension `.check`)
    */
-  def filesInDir(dir: String)(implicit flags: TestFlags): List[TestCase] = {
+  def testsIn(dir: String)(implicit flags: TestFlags): List[TestCase] = {
     val f = new JFile(dir)
     assert(f.exists(), "the directory " + f.getAbsolutePath + " does not exist")
     f.listFiles.foldLeft(List.empty[TestCase]) { case (inputs, f) =>
