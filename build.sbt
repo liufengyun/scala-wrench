@@ -1,11 +1,5 @@
 lazy val dottyVersion = "0.17.0-RC1"
 
-def findLib(attList: Seq[Attributed[File]], name: String) =
-  attList
-    .map(_.data.getAbsolutePath)
-    .find(_.contains(name))
-    .toList.mkString(java.io.File.pathSeparator)
-
 lazy val init: Project = project
   .in(file("init"))
   .settings(
