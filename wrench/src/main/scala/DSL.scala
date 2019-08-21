@@ -46,8 +46,10 @@ def withPlugin(paths: String*)(op: given TestFlags => Unit)(implicit flags: Test
   val pluginClassPaths = pluginOuts.map {
     case CompileOutput(test: DirectoryTestCase, _, _)  =>
       // copy plugin.properties
-      val pluginProps = new JFile(test.sourceDir, "plugin.properties")
-      Files.copy(pluginProps.toPath, test.targetDir.toPath, StandardCopyOption.REPLACE_EXISTING)
+      val propFile = "plugin.properties"
+      val source = test.sourceDir.child(propFile)
+      val dest = test.targetDir.child(propFile)
+      Files.copy(source.toPath, dest.toPath, StandardCopyOption.REPLACE_EXISTING)
       test.targetDir.getAbsolutePath
     case _ =>
       ??? // impossible

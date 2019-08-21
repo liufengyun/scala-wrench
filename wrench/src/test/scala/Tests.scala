@@ -20,6 +20,11 @@ class Tests {
 
   @Test
   def runTests = filesInDir("tests/run").shouldRun
+
+  @Test
+  def pluginDivZeroTests = withPlugin("tests/plugins/divideZero") {
+    filesInDir("tests/plugins/divideZeroTests").shouldNotCompile
+  }
 }
 
 object Tests {

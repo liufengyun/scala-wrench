@@ -45,7 +45,7 @@ final case class TestFlags(
         if (v.length == 0) Array(k) else Array(k, v)
       } ++ {
         if (pluginPath.isEmpty) Nil
-        else Array("-Xplugin", pluginPath.mkString(","))
+        else Array("-Xplugin:" + pluginPath.mkString(","))
       }
 
   /** Subset of the flags that should be passed to javac. */
