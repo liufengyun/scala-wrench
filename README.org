@@ -60,20 +60,20 @@ Here is an example test file:
 
 - =directory("tests/pos/lib")= ::
   Create a directory test case for the path =tests/pos/lib=.
-  The directory may optionally contain a check file `lib.check` inside
+  The directory may optionally contain a check file =lib.check= inside
   the directory for run tests.
 
   The source files in the directory may be compiled in batches. The batches
   are recognized and ordered by file name endings. For example, given the
   following files in the directory:
 
-  - A_1.scala
-  - B_1.scala
-  - C_2.scala
-  - D_2.scala
+  - =A_1.scala=
+  - =B_1.scala=
+  - =C_2.scala=
+  - =D_2.scala=
 
-  The files `A_1.scala` and `B_1.scala` will be compiled first, and the compiled
-  class files will be used to compile `C_2.scala` and `D_2.scala`.
+  The files =A_1.scala= and =B_1.scala= will be compiled first, and the compiled
+  class files will be used to compile =C_2.scala= and =D_2.scala=.
 
 - =testsIn("tests/pos")= ::
   Create a list of test cases for each file or directory under =test/pos=.
