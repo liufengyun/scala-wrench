@@ -3,7 +3,7 @@ package wrench
 
 import java.io.{File => JFile}
 
-inline def (s: String) withoutExtension: String =
+def (s: String) withoutExtension: String =
   s.replaceFirst("[.][^.]+$", "")
 
 def (f: JFile) ensureFresh(): JFile = {
@@ -26,3 +26,6 @@ def (s: String) toLines: Seq[String] = s.split("\\r?\\n")
 
 def (f: JFile) isScalaOrJava: Boolean =
   f.getName().endsWith(".scala") || f.getName().endsWith(".java")
+
+def (f: JFile) child(name: String): JFile =
+  new JFile(f, name)

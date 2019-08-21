@@ -5,7 +5,7 @@ import java.io.{File => JFile}
 
 import dotty.tools.dotc.reporting.diagnostic.MessageContainer
 
-trait TestCase {
+sealed trait TestCase {
   def name: String
   def sources: List[JFile]
   def runCheckFile: Option[JFile]
@@ -105,24 +105,19 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
 }
 
 object TestCase {
-  private def outDir(file: JFile)(implicit ctx: TestContext): JFile =
-    new JFile(
-      ctx.rootOutDirectory + JFile.separator +
-        file.getName.withoutExtension + JFile.separator
-    )
-
   /** A single file from the string path `f` using the supplied flags */
-  def file(f: String)(implicit flags: TestFlags, ctx: TestContext): TestCase = {
+  def file(f: String)(implicit flags: TestFlags): TestCase = {
     val sourceFile = new JFile(f)
     assert(sourceFile.exists(), s"the file ${sourceFile.getAbsolutePath()} does not exist")
-    FileTestCase(f, flags, outDir(sourceFile), sourceFile)
+    val outDir = new JFile(sourceFile.getParentFile(), sourceFile.getName().withoutExtension)
+    FileTestCase(f, flags, outDir, sourceFile)
   }
 
   /** A directory `f` using the supplied `flags`. This method does
    *  deep compilation, that is - it compiles all files and subdirectories
    *  contained within the directory `f`.
    */
-  def directory(dir: String, recursive: Boolean = true)(implicit flags: TestFlags, ctx: TestContext): TestCase = {
+  def directory(dir: String, recursive: Boolean = false)(implicit flags: TestFlags): DirectoryTestCase = {
     val sourceDir = new JFile(dir)
 
     assert(sourceDir.exists(), s"the directory ${sourceDir.getAbsolutePath()} does not exist")
@@ -139,7 +134,8 @@ object TestCase {
 
     val sortedFiles = flatten(sourceDir).sorted
 
-    DirectoryTestCase(dir, sourceDir, flags, outDir(sourceDir), sortedFiles, groupable = !recursive)
+    val outDir = sourceDir.child("out")
+    DirectoryTestCase(dir, sourceDir, flags, outDir, sortedFiles, groupable = !recursive)
   }
 
   /** This function creates a list of TestCase for the files and folders
@@ -153,7 +149,7 @@ object TestCase {
    *  - Directories can have an associated check-file, where the check file has
    *    the same name as the directory (with the file extension `.check`)
    */
-  def filesInDir(dir: String)(implicit flags: TestFlags, ctx: TestContext): List[TestCase] = {
+  def filesInDir(dir: String)(implicit flags: TestFlags): List[TestCase] = {
     val f = new JFile(dir)
     assert(f.exists(), "the directory " + f.getAbsolutePath + " does not exist")
     f.listFiles.foldLeft(List.empty[TestCase]) { case (inputs, f) =>
