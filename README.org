@@ -60,8 +60,8 @@ Here is an example test file:
 
 - =directory("tests/pos/lib")= ::
   Create a directory test case for the path =tests/pos/lib=.
-  The directory may optionally contain a check file =lib.check= inside
-  the directory for run tests.
+  You can optionally put a check file =lib.check= inside
+  the directory `tests/pos/lib` for run tests.
 
   The source files in the directory may be compiled in batches. The batches
   are recognized and ordered by file name endings. For example, given the
