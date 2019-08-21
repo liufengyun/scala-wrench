@@ -7,11 +7,11 @@ lazy val init: Project = project
     version := "0.0.1",
     organization := "xmid.org",
     scalaVersion := dottyVersion,
-    fork := true,
+    fork := true,    // important
     baseDirectory in Test := baseDirectory.value / "..",
 
     libraryDependencies ++= Seq(
-      "ch.epfl.lamp" %% "dotty-compiler" % scalaVersion.value % "provided",
+      "ch.epfl.lamp" %% "dotty-compiler" % dottyVersion % "provided",
       "com.novocode" % "junit-interface" % "0.11" % "test"
     ),
 
@@ -29,5 +29,13 @@ lazy val wrench = project
     name := "scala-wrench",
     version := "0.0.1",
     organization := "xmid.org",
-    scalaVersion := dottyVersion
+    scalaVersion := dottyVersion,
+    fork := true,  // important
+
+    baseDirectory in Test := baseDirectory.value / "..",
+
+    libraryDependencies ++= Seq(
+      "ch.epfl.lamp" %% "dotty-compiler" % dottyVersion % "test",
+      "com.novocode" % "junit-interface" % "0.11" % "test"
+    )
   )
