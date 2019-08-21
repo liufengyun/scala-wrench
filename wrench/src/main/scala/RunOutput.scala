@@ -4,7 +4,7 @@ package wrench
 import java.io.{File => JFile}
 
 final case class RunOutput(test: TestCase, exitCode: Int, output: String) {
-  def checkSucceeded(implicit ctx: TestContext): Boolean = {
+  private[wrench] def checkSucceeded(implicit ctx: TestContext): Boolean = {
     if (exitCode != 0) {
       ctx.error(test.name + " exited with " + exitCode)
       ctx.error("output: " + output)

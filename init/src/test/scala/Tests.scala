@@ -12,15 +12,6 @@ class Tests {
   implicit val flags: TestFlags = Defaults.defaultOptions.and("-Xfatal-warnings")
 
   @Test
-  def posTests = filesInDir("tests/pos").shouldCompile
-
-  @Test
-  def negTests = filesInDir("tests/neg").shouldNotCompile
-
-  @Test
-  def runTests = filesInDir("tests/run").shouldRun
-
-  @Test
   def initPosTests = ()
 
   @Test

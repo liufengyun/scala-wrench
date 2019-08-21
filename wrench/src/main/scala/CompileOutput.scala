@@ -6,7 +6,7 @@ import dotty.tools.dotc.reporting.diagnostic.MessageContainer
 
 
 final case class CompileOutput(test: TestCase, output: String, errors: List[MessageContainer]) {
-  def checkFailed(implicit ctx: TestContext): Boolean = {
+  private[wrench] def checkFailed(implicit ctx: TestContext): Boolean = {
     var checkSuccess: Boolean = true
     Toolbox.checkErrors(test.sources, errors) { msg =>
       ctx.error(msg)
@@ -21,7 +21,7 @@ final case class CompileOutput(test: TestCase, output: String, errors: List[Mess
     ctx.error("Compile failed. Check log file for more detail: " + test.compileLogPath)
   }
 
-  def checkSucceeded(implicit ctx: TestContext): Boolean = {
+  private[wrench] def checkSucceeded(implicit ctx: TestContext): Boolean = {
     if (!errors.isEmpty) dumpLog
     errors.isEmpty
   }

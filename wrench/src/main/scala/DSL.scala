@@ -9,20 +9,20 @@ def directory(f: String)(implicit flags: TestFlags): TestCase = TestCase.directo
 def filesInDir(f: String)(implicit flags: TestFlags): List[TestCase] = TestCase.filesInDir(f)
 
 def (test: TestCase) shouldCompile(implicit ctx: TestContext): Unit = {
-  if (test.compile.checkSucceeded) ctx.reportPassed(test)
-  else ctx.reportFailed(test)
+  if (test.compile.checkSucceeded) ctx.passed(test)
+  else ctx.failed(test)
   test.cleanup
 }
 
 def (test: TestCase) shouldNotCompile(implicit ctx: TestContext): Unit = {
-  if (test.compile.checkFailed) ctx.reportPassed(test)
-  else ctx.reportFailed(test)
+  if (test.compile.checkFailed) ctx.passed(test)
+  else ctx.failed(test)
   test.cleanup
 }
 
 def (test: TestCase) shouldRun(implicit ctx: TestContext): Unit = {
-  if (test.compile.checkSucceeded && test.run.checkSucceeded) ctx.reportPassed(test)
-  else ctx.reportFailed(test)
+  if (test.compile.checkSucceeded && test.run.checkSucceeded) ctx.passed(test)
+  else ctx.failed(test)
   test.cleanup
 }
 
@@ -37,7 +37,7 @@ def withPlugin(paths: String*)(op: given TestFlags => Unit)(implicit flags: Test
   }
   val success = pluginOuts.forall { pluginOut =>
     val success = pluginOut.checkSucceeded
-    if (!success) ctx.reportFailed(pluginOut.test)
+    if (!success) ctx.failed(pluginOut.test)
     success
   }
 

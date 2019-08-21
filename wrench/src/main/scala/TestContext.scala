@@ -10,13 +10,13 @@ import scala.language.implicitConversions
  */
 trait TestContext {
   /** Report a test as passing */
-  def reportPassed(test: TestCase): Unit
+  def passed(test: TestCase): Unit
 
   /** Add the name of the failed test */
-  def reportFailed(test: TestCase): Unit
+  def failed(test: TestCase): Unit
 
   /** Print message */
-  def echo(msg: String): Unit
+  def info(msg: String): Unit
 
   /** Print error message */
   def error(msg: String): Unit
@@ -26,6 +26,9 @@ trait TestContext {
 
   /** Clean up after test */
   def cleanup: Unit
+
+  /** Timeout in running a single test */
+  def runTimeout: Int
 }
 
 final class DefaultContext(val runTimeout: Int = 2000) extends TestContext {
@@ -36,13 +39,13 @@ final class DefaultContext(val runTimeout: Int = 2000) extends TestContext {
 
   private[this] var passed = 0
 
-  def reportFailed(test: TestCase): Unit =
+  def failed(test: TestCase): Unit =
     failedTests += test
 
-  def reportPassed(test: TestCase): Unit =
+  def passed(test: TestCase): Unit =
   passedTests += test
 
-  def echo(msg: String): Unit = println(msg)
+  def info(msg: String): Unit = println(msg)
 
   def error(msg: String): Unit = println("[error] " + msg)
 

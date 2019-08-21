@@ -5,7 +5,7 @@ import java.io.{File => JFile}
 
 import dotty.tools.dotc.reporting.diagnostic.MessageContainer
 
-sealed trait TestCase {
+trait TestCase {
   def name: String
   def sources: List[JFile]
   def runCheckFile: Option[JFile]
@@ -13,8 +13,8 @@ sealed trait TestCase {
   def compileLogPath: String
   def runLogPath: String
 
-  def compile(implicit ctx: TestContext): CompileOutput
-  def run(implicit ctx: TestContext): RunOutput
+  private[wrench] def compile(implicit ctx: TestContext): CompileOutput
+  private[wrench] def run(implicit ctx: TestContext): RunOutput
 
   def cleanup: Unit = {
     targetDir.deleteRecursive()
@@ -36,7 +36,7 @@ case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: 
   }
 
   def compile(implicit ctx: TestContext): CompileOutput = {
-    ctx.echo("compiling " + this.name)
+    ctx.info("compiling " + this.name)
     val flags2 = flags.and("-d", out).withClassPath(out)
     targetDir.mkdirs()
 
@@ -45,7 +45,7 @@ case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: 
   }
 
   def run(implicit ctx: TestContext): RunOutput = {
-    ctx.echo("running " + this.name)
+    ctx.info("running " + this.name)
     val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", 2000)
     RunOutput(this, exitCode, output)
   }
@@ -64,7 +64,7 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
   }
 
   def compile(implicit ctx: TestContext): CompileOutput = {
-    ctx.echo("compiling " + this.name)
+    ctx.info("compiling " + this.name)
     val flags2 = flags.and("-d", out).withClassPath(out)
     targetDir.mkdirs()
 
@@ -98,7 +98,7 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
   }
 
   def run(implicit ctx: TestContext): RunOutput = {
-    ctx.echo("running " + this.name)
+    ctx.info("running " + this.name)
     val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", 2000)
     RunOutput(this, exitCode, output)
   }
