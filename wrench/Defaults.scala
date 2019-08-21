@@ -1,13 +1,11 @@
-package org.scalaverify
-package test
+package org.xmid
+package wrench
 
 import java.io.File
 
 import org.xmid.wrench._
 
 object Defaults {
-  val rootOutputDir = "out" + File.separator
-
   val noCheckOptions = Map(
     "-pagewidth" -> "120",
     "-color:never" -> ""

@@ -22,20 +22,9 @@ lazy val init: Project = project
     ),
 
     javaOptions in Test ++= {
-      val attList = (dependencyClasspath in Runtime).value
       lazy val pluginJars = (Compile / packageBin / artifactPath).value
 
-      List(
-        "-DdottyInterfaces=" + findLib(attList, "dotty-interfaces"),
-        "-DdottyLibrary=" + findLib(attList, "dotty-library"),
-        "-DdottyCompiler=" + findLib(attList, "dotty-compiler"),
-        "-DcompilerInterface=" + findLib(attList, "compiler-interface"),
-        "-DscalaLibrary=" + findLib(attList, "scala-library-"),
-        "-DscalaAsm=" + findLib(attList, "scala-asm"),
-        "-DjlineTerminal=" + findLib(attList, "jline-terminal"),
-        "-DjlineReader=" + findLib(attList, "jline-reader"),
-        "-Dplugin=" + pluginJars
-      )
+      List("-Dplugin=" + pluginJars)
     }
   )
   .dependsOn(wrench % Test)

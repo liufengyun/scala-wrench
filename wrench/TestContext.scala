@@ -24,14 +24,11 @@ trait TestContext {
   /** Echo the summary report to the appropriate locations */
   def echoSummary(): Unit
 
-  /** The root directory for compile output */
-  def rootOutDirectory: String
-
   /** Clean up after test */
   def cleanup: Unit
 }
 
-final class DefaultContext(val rootOutDirectory: String, val runTimeout: Int = 2000) extends TestContext {
+final class DefaultContext(val runTimeout: Int = 2000) extends TestContext {
   import scala.collection.JavaConverters._
 
   private val failedTests = new scala.collection.mutable.ListBuffer[TestCase]
