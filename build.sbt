@@ -11,6 +11,16 @@ lazy val wrench = project
 
     baseDirectory in Test := baseDirectory.value / "..",
 
+    publishTo := {
+      val nexus = "https://my.artifact.repo.net/"
+      if (isSnapshot.value)
+        Some("snapshots" at nexus + "content/repositories/snapshots")
+      else
+        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
+    },
+
+    credentials += Credentials(Path.userHome / ".sbt" / ".credentials"),
+
     libraryDependencies ++= Seq(
       "ch.epfl.lamp" %% "dotty-compiler" % dottyVersion % "test",
       "com.novocode" % "junit-interface" % "0.11" % "test"
