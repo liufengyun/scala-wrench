@@ -38,19 +38,4 @@ object Defaults {
 
   val commonOptions = checkOptions ++ noCheckOptions ++ yCheckOptions
   val defaultOptions = TestFlags(basicClasspath, commonOptions)
-  val withCompilerOptions =
-    defaultOptions.withClassPath(compilerClasspath).withRunClassPath(compilerClasspath)
-  val allowDeepSubtypes = defaultOptions without "-Yno-deep-subtypes"
-  val allowDoubleBindings = defaultOptions without "-Yno-double-bindings"
-  val picklingOptions = defaultOptions and (
-    "-Xprint-types" -> "",
-    "-Ytest-pickler" -> "",
-    "-Yprint-pos" -> "",
-    "-Yprint-pos-syms" -> ""
-  )
-  val picklingWithCompilerOptions =
-    picklingOptions.withClassPath(compilerClasspath).withRunClassPath(compilerClasspath)
-  val scala2Mode = defaultOptions and "-language:Scala2"
-  val explicitUTF8 = defaultOptions and ("-encoding" -> "UTF8")
-  val explicitUTF16 = defaultOptions and ("-encoding" -> "UTF16")
 }

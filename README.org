@@ -26,8 +26,6 @@ Also, set the option =fork= to =true=:
         fork := true    // important
 #+end_src
 
-Here is an example build file: [[./build.sbt][build.sbt]].
-
 *** Writing tests
 
 Now, you can specify the tests like the following:
@@ -63,7 +61,7 @@ Here is an example test file:
   You can optionally put a check file =lib.check= inside
   the directory =tests/pos/lib= for run tests.
 
-  The source files in the directory may be compiled in batches. The batches
+  The source files in the directory may be compiled in groups. The groups
   are recognized and ordered by file name endings. For example, given the
   following files in the directory:
 
@@ -114,5 +112,5 @@ Here is an example test file:
 
 ** Credits
 
-The code was adapted from the test framework for Dotty, which was
-initially developed by @felixmulder .
+The code takes inspiration from the test framework for Dotty, and follows its
+convention on error annotations and ending-based test groups.

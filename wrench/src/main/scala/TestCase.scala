@@ -47,7 +47,7 @@ case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: 
 
   def run(implicit ctx: TestContext): RunOutput = {
     ctx.info("running " + this.name)
-    val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", 2000)
+    val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", ctx.runTimeout)
     RunOutput(this, exitCode, output)
   }
 }
@@ -100,7 +100,7 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
 
   def run(implicit ctx: TestContext): RunOutput = {
     ctx.info("running " + this.name)
-    val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", 2000)
+    val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", ctx.runTimeout)
     RunOutput(this, exitCode, output)
   }
 }

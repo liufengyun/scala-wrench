@@ -68,7 +68,7 @@ object Toolbox {
   }
 
   /** Run the main class with the given classpath for the given duration (milliseconds) */
-  def run(cp: List[String], mainClass: String, duration: Int): (Int, String) = {
+  def run(cp: List[String], mainClass: String, timeout: Int): (Int, String) = {
     val javaBin = Paths.get(sys.props("java.home"), "bin", "java").toString
     val process = new ProcessBuilder(javaBin, "-Dfile.encoding=UTF-8", "-Xmx1g", "-cp", cp.mkString(JFile.pathSeparator), mainClass)
       .redirectErrorStream(true)
@@ -82,7 +82,7 @@ object Toolbox {
 
     var start = System.currentTimeMillis
     var line: String = childStdout.readLine()
-    while (process.isAlive && (System.currentTimeMillis - start) < duration) {
+    while (process.isAlive && (System.currentTimeMillis - start) < timeout) {
       if (line != null) sb.append(line).append(System.lineSeparator)
       line = childStdout.readLine()
     }
