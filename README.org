@@ -112,6 +112,17 @@ Here is an example test file:
   Enable precompiled plugins in =paths=
   for all compilations in the body.
 
+** Parallelization
+
+To run the tests sequentially, use the following =TestContext=:
+
+:  implicit val testCtx: TestContext = new DefaultContext
+
+The =ParallelContext= supports running the tests in parallel:
+
+:   implicit val testCtx: TestContext = new ParallelContext
+
+
 ** Credits
 
 The code takes inspiration from the test framework for Dotty, and follows its

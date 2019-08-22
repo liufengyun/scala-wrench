@@ -30,6 +30,9 @@ trait TestContext extends ActionContext {
   /** Clean up after test */
   def cleanup: Unit
 
+  /** A transaction where evens happen on the given ActionContext were commited atomically */
+  def transaction(op: given ActionContext => Unit): Unit
+
   /** Parallelize a list of operations */
   def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit
 }
@@ -60,11 +63,11 @@ private[wrench] class StoredActionContext(ctx: TestContext) extends ActionContex
   }
 }
 
-class DefaultContext(val runTimeout: Int = 2000) extends TestContext {
-  import scala.collection.JavaConverters._
+class DefaultContext extends TestContext {
+  val runTimeout: Int = 2000
 
-  private val failedTests = new scala.collection.mutable.ListBuffer[TestCase]
-  private val passedTests = new scala.collection.mutable.ListBuffer[TestCase]
+  protected  val failedTests = new scala.collection.mutable.ListBuffer[TestCase]
+  protected val passedTests = new scala.collection.mutable.ListBuffer[TestCase]
 
   private[this] var passed = 0
 
@@ -72,7 +75,7 @@ class DefaultContext(val runTimeout: Int = 2000) extends TestContext {
     failedTests += test
 
   def passed(test: TestCase): Unit =
-  passedTests += test
+    passedTests += test
 
   def info(msg: String): Unit = println(msg)
 
@@ -100,6 +103,27 @@ class DefaultContext(val runTimeout: Int = 2000) extends TestContext {
 
   def cleanup: Unit = ()
 
+  def transaction(op: given ActionContext => Unit): Unit = op given this
+
   def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit =
-    tests.par.foreach(test => op(test))
+    tests.par.foreach(op(_))
+}
+
+class ParallelContext extends DefaultContext {
+  override def failed(test: TestCase): Unit = failedTests.synchronized {
+    failedTests += test
+  }
+
+  override def passed(test: TestCase): Unit = passedTests.synchronized {
+    passedTests += test
+  }
+
+  override def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit =
+    tests.foreach(op(_))
+
+  override def transaction(op: given ActionContext => Unit): Unit = {
+    val actionCtx: StoredActionContext = new StoredActionContext(this)
+    op given actionCtx
+    actionCtx.commit
+  }
 }

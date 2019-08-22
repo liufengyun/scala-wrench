@@ -10,19 +10,19 @@ def file(f: String)(implicit flags: TestFlags): TestCase = TestCase.file(f)
 def directory(f: String)(implicit flags: TestFlags): TestCase = TestCase.directory(f)
 def testsIn(f: String)(implicit flags: TestFlags): List[TestCase] = TestCase.testsIn(f)
 
-def (test: TestCase) shouldCompile(implicit ctx: TestContext): Unit = {
+def (test: TestCase) shouldCompile(implicit ctx: TestContext): Unit = ctx.transaction {
   if (test.compile.checkSucceeded) ctx.passed(test)
   else ctx.failed(test)
   test.cleanup
 }
 
-def (test: TestCase) checkCompile(implicit ctx: TestContext): Unit = {
+def (test: TestCase) checkCompile(implicit ctx: TestContext): Unit = ctx.transaction {
   if (test.compile.checkCompile) ctx.passed(test)
   else ctx.failed(test)
   test.cleanup
 }
 
-def (test: TestCase) shouldRun(implicit ctx: TestContext): Unit = {
+def (test: TestCase) shouldRun(implicit ctx: TestContext): Unit = ctx.transaction {
   if (test.compile.checkSucceeded && test.run.checkSucceeded) ctx.passed(test)
   else ctx.failed(test)
   test.cleanup
@@ -33,14 +33,21 @@ def (tests: List[TestCase]) checkCompile(implicit ctx: TestContext): Unit = test
 def (tests: List[TestCase]) shouldRun(implicit ctx: TestContext): Unit = tests.parallelize(_.shouldRun)
 
 def withPlugin(paths: String*)(op: given TestFlags => Unit)(implicit flags: TestFlags, ctx: TestContext): Unit = {
+  var success = true
   val pluginOuts = paths.toList.map { path =>
     val flag2 = flags.withClassPath(Defaults.compilerClasspath)
-    directory(path)(flag2).compile
-  }
-  val success = pluginOuts.forall { pluginOut =>
-    val success = pluginOut.checkSucceeded
-    if (!success) ctx.failed(pluginOut.test)
-    success
+    val test = directory(path)(flag2)
+
+    var compileOut: CompileOutput  = null
+    ctx.transaction {
+      compileOut = test.compile
+      if (!compileOut.checkSucceeded) {
+        success = false
+        ctx.failed(test)
+      }
+    }
+
+    compileOut
   }
 
   if (!success) return
