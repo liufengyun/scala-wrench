@@ -24,3 +24,10 @@ lazy val wrench = project
       "com.novocode" % "junit-interface" % "0.11" % "test"
     )
   )
+
+
+// set the default project. https://github.com/sbt/sbt/issues/1224
+onLoad in Global ~= (_ andThen ("project wrench" :: _))
+
+// set up a dummy projct to avoid generating a default root project
+lazy val root = project.in(file("."))
