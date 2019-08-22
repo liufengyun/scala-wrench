@@ -4,10 +4,6 @@ package wrench
 import scala.collection.mutable
 import scala.language.implicitConversions
 
-/** `TestContext` can be used by unit tests by utilizing `@AfterClass` to
- *  call `echoSummary`
- *
- */
 trait TestContext {
   /** Report a test as passing */
   def passed(test: TestCase): Unit
@@ -21,7 +17,7 @@ trait TestContext {
   /** Print error message */
   def error(msg: String): Unit
 
-  /** Echo the summary report to the appropriate locations */
+  /** Print summary report */
   def echoSummary(): Unit
 
   /** Clean up after test */
@@ -49,7 +45,6 @@ final class DefaultContext(val runTimeout: Int = 2000) extends TestContext {
 
   def error(msg: String): Unit = println("[error] " + msg)
 
-  /** Both echoes the summary to stdout and prints to file */
   def echoSummary(): Unit = {
     val failed = failedTests.size
     val passed = passedTests.size

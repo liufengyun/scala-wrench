@@ -23,7 +23,7 @@ object Toolbox {
     val ps = new PrintWriter(bw)
     val reporter = new ConsoleReporter(writer = ps)
     val driver = new Driver
-    driver.process(flags.all ++ files.map(_.getPath), reporter = reporter)
+    driver.process(flags.all ++ files.map(_.getAbsolutePath), reporter = reporter)
     (reporter, sw.toString)
   }
 
@@ -34,7 +34,7 @@ object Toolbox {
       Source.fromFile(file, "UTF-8").getLines().zipWithIndex.foreach { case (line, lineNbr) =>
         val errors = line.sliding("// error".length).count(_.mkString == "// error")
         if (errors > 0)
-          errorMap.put(s"${file.getPath}:${lineNbr}", errors)
+          errorMap.put(s"${file.getAbsolutePath}:${lineNbr}", errors)
       }
     }
 
@@ -48,8 +48,7 @@ object Toolbox {
 
     reporterErrors.foreach { error =>
       if (error.pos.exists) {
-        def toRelative(path: String): String = path.split("/").dropWhile(_ != "tests").mkString("/")
-        val fileName = toRelative(error.pos.source.file.toString)
+        val fileName = error.pos.source.file.absolutePath
         val key = s"$fileName:${error.pos.line}"
 
         val errors = errorMap.get(key)
