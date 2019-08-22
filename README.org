@@ -17,7 +17,7 @@ It is supposed to make your life easier if
 Add Wrench as a test dependency in SBT:
 
 #+begin_src scala
-        libraryDependencies += "xmid.org" % "scala-wrench" % "0.0.1" % "test"
+        libraryDependencies += "org.xmid" %% "scala-wrench" % "0.0.1" % "test"
 #+end_src
 
 Also, set the option =fork= to =true=:
