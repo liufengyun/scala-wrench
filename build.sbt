@@ -1,3 +1,5 @@
+import xerial.sbt.Sonatype._
+
 lazy val dottyVersion = "0.17.0-RC1"
 
 lazy val wrench = project
@@ -13,7 +15,9 @@ lazy val wrench = project
 
     publishTo := sonatypePublishTo.value,
 
-    credentials += Credentials(Path.userHome / ".sbt" / ".credentials"),
+    publishMavenStyle := true,
+    licenses := Seq("MIT" -> url("https://opensource.org/licenses/MIT")),
+    sonatypeProjectHosting := Some(GitHubHosting("liufengyun", "scala-wrench", "fengyun@xmid.org")),
 
     libraryDependencies ++= Seq(
       "ch.epfl.lamp" %% "dotty-compiler" % dottyVersion % "test",
