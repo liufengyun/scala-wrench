@@ -11,13 +11,7 @@ lazy val wrench = project
 
     baseDirectory in Test := baseDirectory.value / "..",
 
-    publishTo := {
-      val nexus = "https://my.artifact.repo.net/"
-      if (isSnapshot.value)
-        Some("snapshots" at nexus + "content/repositories/snapshots")
-      else
-        Some("releases"  at nexus + "service/local/staging/deploy/maven2")
-    },
+    publishTo := sonatypePublishTo.value,
 
     credentials += Credentials(Path.userHome / ".sbt" / ".credentials"),
 
