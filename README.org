@@ -123,6 +123,38 @@ The =ParallelContext= supports running the tests in parallel:
 :   implicit val testCtx: TestContext = new ParallelContext
 
 
+** FAQ
+
+*** How to make the plugin available in testing
+
+Suppose that your plugin is an SBT project, given the following setting in SBT:
+
+#+BEGIN_SRC scala
+    javaOptions in Test ++= {
+      lazy val pluginJars = (Compile / packageBin / artifactPath).value
+
+      List("-Dplugin=" + pluginJars)
+    }
+#+END_SRC
+
+You can use the plugin as follows in testing:
+
+#+BEGIN_SRC scala
+withPluginBin(sys.props("plugin")) { ... }
+#+END_SRC
+
+*** How to put =tests= under the project root directory
+
+Suppose that your plugin project is located in a sub-directory =plugin/= under
+the project root directory, you can use the following code to reset
+the default working directory:
+
+#+BEGIN_SRC scala
+    baseDirectory in Test := baseDirectory.value / ".."
+#+END_SRC
+
+Then you can write =testsIn("tests/pos/")= instead of =testsIn("../tests/pos/")=.
+
 ** Credits
 
 The code takes inspiration from the test framework for Dotty, and follows its
