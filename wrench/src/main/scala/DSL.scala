@@ -28,9 +28,9 @@ def (test: TestCase) shouldRun(implicit ctx: TestContext): Unit = {
   test.cleanup
 }
 
-def (tests: List[TestCase]) shouldCompile(implicit ctx: TestContext): Unit = tests.map(_.shouldCompile)
-def (tests: List[TestCase]) checkCompile(implicit ctx: TestContext): Unit = tests.map(_.checkCompile)
-def (tests: List[TestCase]) shouldRun(implicit ctx: TestContext): Unit = tests.map(_.shouldRun)
+def (tests: List[TestCase]) shouldCompile(implicit ctx: TestContext): Unit = tests.parallelize(_.shouldCompile)
+def (tests: List[TestCase]) checkCompile(implicit ctx: TestContext): Unit = tests.parallelize(_.checkCompile)
+def (tests: List[TestCase]) shouldRun(implicit ctx: TestContext): Unit = tests.parallelize(_.shouldRun)
 
 def withPlugin(paths: String*)(op: given TestFlags => Unit)(implicit flags: TestFlags, ctx: TestContext): Unit = {
   val pluginOuts = paths.toList.map { path =>

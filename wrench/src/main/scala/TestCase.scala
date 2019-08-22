@@ -14,8 +14,8 @@ trait TestCase {
   def compileLogPath: String
   def runLogPath: String
 
-  private[wrench] def compile(implicit ctx: TestContext): CompileOutput
-  private[wrench] def run(implicit ctx: TestContext): RunOutput
+  private[wrench] def compile(implicit ctx: ActionContext): CompileOutput
+  private[wrench] def run(implicit ctx: ActionContext): RunOutput
 
   def cleanup: Unit = {
     targetDir.deleteRecursive()
@@ -36,7 +36,7 @@ case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: 
     else None
   }
 
-  def compile(implicit ctx: TestContext): CompileOutput = {
+  def compile(implicit ctx: ActionContext): CompileOutput = {
     ctx.info("compiling " + this.name)
     val flags2 = flags.and("-d" -> out).withClassPath(out)
     targetDir.mkdirs()
@@ -45,7 +45,7 @@ case class FileTestCase(name: String, flags: TestFlags, targetDir: JFile, file: 
     CompileOutput(this, output, reporter.allErrors)
   }
 
-  def run(implicit ctx: TestContext): RunOutput = {
+  def run(implicit ctx: ActionContext): RunOutput = {
     ctx.info("running " + this.name)
     val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", ctx.runTimeout)
     RunOutput(this, exitCode, output)
@@ -64,7 +64,7 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
     else None
   }
 
-  def compile(implicit ctx: TestContext): CompileOutput = {
+  def compile(implicit ctx: ActionContext): CompileOutput = {
     ctx.info("compiling " + this.name)
     val flags2 = flags.and("-d" -> out).withClassPath(out)
     targetDir.mkdirs()
@@ -98,7 +98,7 @@ case class DirectoryTestCase(name: String, sourceDir: JFile, flags: TestFlags, t
     }
   }
 
-  def run(implicit ctx: TestContext): RunOutput = {
+  def run(implicit ctx: ActionContext): RunOutput = {
     ctx.info("running " + this.name)
     val (exitCode, output) = Toolbox.run(out :: flags.classPath, "Test", ctx.runTimeout)
     RunOutput(this, exitCode, output)
