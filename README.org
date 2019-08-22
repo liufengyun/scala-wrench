@@ -57,6 +57,7 @@ Here is an example test file:
   the same directory for run tests.
 
 - =directory("tests/pos/lib")= ::
+
   Create a directory test case for the path =tests/pos/lib=.
   You can optionally put a check file =lib.check= inside
   the directory =tests/pos/lib= for run tests.
@@ -81,6 +82,7 @@ Here is an example test file:
 *** Assertions
 
 - =checkCompile= ::
+
   Compilation of the test(s) should produce the same errors as specified
   in source code. The errors should match code line as well numbers.
 
