@@ -32,6 +32,9 @@ object Util {
   def (f: JFile) isScalaOrJava: Boolean =
     f.getName().endsWith(".scala") || f.getName().endsWith(".java")
 
+  def (f: JFile) isScala: Boolean =
+    f.getName().endsWith(".scala")
+
   def (f: JFile) child(name: String): JFile =
     new JFile(f, name)
 }

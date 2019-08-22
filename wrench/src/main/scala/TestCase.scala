@@ -127,9 +127,9 @@ object TestCase {
       if (f.isDirectory) {
         val files = f.listFiles.toList
         if (recursive) files.flatMap(flatten)
-        else files.filter(_.isScalaOrJava)
+        else files.filter(_.isScala)
       }
-      else if (f.isScalaOrJava)
+      else if (f.isScala)
         List(f)
       else Nil
 
@@ -154,7 +154,7 @@ object TestCase {
     val f = new JFile(dir)
     assert(f.exists(), "the directory " + f.getAbsolutePath + " does not exist")
     f.listFiles.foldLeft(List.empty[TestCase]) { case (inputs, f) =>
-      if (f.isScalaOrJava) file(f.getPath) :: inputs
+      if (f.isScala) file(f.getPath) :: inputs
       else if (f.isDirectory) directory(f.getPath, recursive = false) :: inputs
       else inputs
     }
