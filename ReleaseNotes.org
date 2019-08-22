@@ -1,0 +1,10 @@
+* Release Notes
+
+** v0.0.1 2019.8.23
+
+Initial version
+
+- support both sequential & parallel testing
+- support compile groups in test case
+- support run tests
+- support plugins
