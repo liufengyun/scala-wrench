@@ -1,4 +1,4 @@
-* 🔧 Scala-Wrench
+* 🔧 Scala-Wrench [[https://travis-ci.org/liufengyun/scala-wrench.svg?branch=master]]
 
 Wrench is a micro test framework for developing compiler plugins for
 [[https://github.com/lampepfl/dotty/][Dotty]].
