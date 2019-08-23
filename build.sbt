@@ -6,7 +6,7 @@ lazy val wrench = project
   .in(file("wrench"))
   .settings(
     name := "scala-wrench",
-    version := "0.0.1",
+    version := "0.0.2",
     organization := "org.xmid",
     scalaVersion := dottyVersion,
     fork := true,  // important
