@@ -53,7 +53,7 @@ Here is an example test file:
 
 - =file("tests/pos/hello.scala")= ::
   Create a single file test case for the file =tests/pos/hello.scala=.
-  You can optionally put a check file `hello.check` inside
+  You can optionally put a check file =hello.check= inside
   the same directory for run tests.
 
 - =directory("tests/pos/lib")= ::
@@ -76,8 +76,8 @@ Here is an example test file:
 
 - =testsIn("tests/pos")= ::
   Create a list of test cases for each file or directory under =test/pos=.
-  Non Java or Scala files are ignored. Each sub-directory will be a directory
-  test case.
+  Non-Scala files are ignored. Each sub-directory will be a /directory test/,
+  each Scala file will be a /file test/.
 
 *** Assertions
 
