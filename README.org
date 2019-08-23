@@ -83,15 +83,13 @@ Here is an example test file:
 
 - =checkCompile= ::
 
-  Compilation of the test(s) should produce the same errors as specified
-  in source code. The errors should match code line as well numbers.
+  Compilation of the test(s) should produce the same errors as specified in
+  source code. The errors should match code line as well as the number of
+  errors.
 
   You can annotate the source code with =// error= to indicate that a
   compilation error is expected at the line. Multiple annotations at the
   same line is supported by repeating =// error=.
-
-  If you want to check that a /warning/ (instead of an error) should happen
-  at a line, enable the compiler option =-Xfatal-warning=.
 
 - =shouldCompile= ::
 
@@ -154,6 +152,15 @@ the default working directory:
 #+END_SRC
 
 Then you can write =testsIn("tests/pos/")= instead of =testsIn("../tests/pos/")=.
+
+*** How to check compiler warnings
+
+If you want to check that a /warning/ (instead of an error) should happen
+at a line, enable the compiler option =-Xfatal-warning=.
+
+#+BEGIN_SRC scala
+  implicit val flags: TestFlags = Defaults.defaultOptions.and("-Xfatal-warnings")
+#+END_SRC
 
 ** Credits
 
