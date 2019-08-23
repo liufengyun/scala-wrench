@@ -1,0 +1,6 @@
+- [ ] Add release notes
+- [ ] Change version in =build.sbt=
+- [ ] =sbt publishSigned=
+- [ ] =sbt sonatypeReleaseAll=
+- [ ] =git tag 0.0.2=
+- [ ] =git push --tags=
