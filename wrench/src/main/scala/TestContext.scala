@@ -106,7 +106,7 @@ class DefaultContext extends TestContext {
   def transaction(op: given ActionContext => Unit): Unit = op given this
 
   def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit =
-    tests.par.foreach(op(_))
+    tests.foreach(op(_))
 }
 
 class ParallelContext extends DefaultContext {
@@ -119,7 +119,7 @@ class ParallelContext extends DefaultContext {
   }
 
   override def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit =
-    tests.foreach(op(_))
+    tests.par.foreach(op(_))
 
   override def transaction(op: given ActionContext => Unit): Unit = {
     val actionCtx: StoredActionContext = new StoredActionContext(this)
