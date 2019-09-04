@@ -1,5 +1,6 @@
 - [ ] Add release notes
 - [ ] Change version in =build.sbt=
+- [ ] Change version in =README=
 - [ ] =sbt publishSigned=
 - [ ] =sbt sonatypeReleaseAll=
 - [ ] =git tag 0.0.2=
