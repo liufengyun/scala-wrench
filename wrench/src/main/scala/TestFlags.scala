@@ -3,10 +3,12 @@ package wrench
 
 import java.io.{File => JFile}
 
-final case class TestFlags(
+final case class TestFlags private[wrench] (
   classPath: List[String],
   runClassPath: List[String], // class path that is used when running `run` tests (not compiling)
   pluginPath: List[String],
+  runTimeout: Int,
+  compileTimeout: Int,
   options: Map[String, String]) { // only valid compiler options can be stored directly in `options`
 
   def and(flag: String): TestFlags =
@@ -36,13 +38,14 @@ final case class TestFlags(
   def withRunClassPath(path: List[String]): TestFlags =
     copy(runClassPath = path ++ this.runClassPath)
 
-  def all: Array[String] =
-    Array("-classpath", classPath.mkString(JFile.pathSeparator)) ++
-      options.flatMap { (k, v) =>
-        if (v.length == 0) Array(k) else Array(k, v)
-      } ++ {
+  lazy val all: Array[String] =
+    Array("-classpath", classPath.mkString(JFile.pathSeparator))
+      ++ options.flatMap { case (k, v) =>
+        if (v.length == 0) List(k) else List(k, v)
+      }
+      ++ {
         if (pluginPath.isEmpty) Nil
-        else Array("-Xplugin:" + pluginPath.mkString(","))
+        else List("-Xplugin:" + pluginPath.mkString(","))
       }
 
   /** Subset of the flags that should be passed to javac. */
@@ -55,6 +58,6 @@ final case class TestFlags(
 }
 
 object TestFlags {
-  def apply(classPath: List[String], options: Map[String, String]): TestFlags =
-    TestFlags(classPath, classPath, Nil, options)
+  def apply(classPath: List[String], options: Map[String, String])(implicit ctx: TestContext): TestFlags =
+    TestFlags(classPath, classPath, Nil, ctx.runTimeout, ctx.compileTimeout, options)
 }

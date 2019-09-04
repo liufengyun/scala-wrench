@@ -37,5 +37,5 @@ object Defaults {
   val yCheckOptions = Map("-Ycheck:all" -> "")
 
   val commonOptions = checkOptions ++ noCheckOptions ++ yCheckOptions
-  val defaultOptions = TestFlags(basicClasspath, commonOptions)
+  def defaultOptions(implicit ctx: TestContext) = TestFlags(basicClasspath, commonOptions)
 }

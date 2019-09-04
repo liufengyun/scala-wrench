@@ -7,7 +7,7 @@ import java.util.HashMap
 import java.time.Duration
 
 import scala.io.Source
-import scala.collection.JavaConversions._
+import scala.jdk.CollectionConverters._
 
 import dotty.tools._
 import dotc.Driver
@@ -32,7 +32,7 @@ object Toolbox {
     val errorMap = new HashMap[String, Integer]()
     files.filter(_.getName.endsWith(".scala")).foreach { file =>
       Source.fromFile(file, "UTF-8").getLines().zipWithIndex.foreach { case (line, lineNbr) =>
-        val errors = line.sliding("// error".length).count(_.mkString == "// error")
+        val errors = line.toSeq.sliding("// error".length).map(_.unwrap).count(_.mkString == "// error")
         if (errors > 0)
           errorMap.put(s"${file.getAbsolutePath}:${lineNbr}", errors)
       }
@@ -62,7 +62,7 @@ object Toolbox {
       else fail("unexpected error without pos: " + error.message)
     }
 
-    errorMap.foreach { case (k, v) =>
+    errorMap.forEach { case (k, v) =>
       if (v != 0) fail("Fewer errors reported at " + k + ", expect " + v + " more")
     }
   }

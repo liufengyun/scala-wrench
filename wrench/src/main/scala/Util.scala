@@ -1,6 +1,9 @@
 package org.xmid
 package wrench
 
+import scala.language.implicitConversions
+import scala.collection.immutable.ArraySeq
+
 import java.io.{File => JFile}
 
 object Util {
@@ -10,7 +13,7 @@ object Util {
   def (path: String) namePart: String =
     new JFile(path).getName
 
-  def (s: String) toLines: Seq[String] = s.split("\\r?\\n")
+  def (s: String) toLines: Seq[String] = s.split("\\r?\\n").toSeq
 
   def (f: JFile) ensureFresh(): JFile = {
     if (f.exists()) f.delete()

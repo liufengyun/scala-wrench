@@ -2,13 +2,10 @@ package org.xmid
 package wrench
 
 import scala.collection.mutable
-import scala.language.implicitConversions
+import scala.concurrent._
 
 /** Context for performing test actions */
 trait ActionContext {
-  /** Timeout in running a single test */
-  def runTimeout: Int
-
   /** Print message */
   def info(msg: String): Unit
 
@@ -18,6 +15,12 @@ trait ActionContext {
 
 /** Context for performing test actions and reporting test result */
 trait TestContext extends ActionContext {
+  /** Timeout in running a single test */
+  def runTimeout: Int
+
+  /** Timeout in compiling a single test */
+  def compileTimeout: Int
+
   /** Report a test as passing */
   def passed(test: TestCase): Unit
 
@@ -65,6 +68,7 @@ private[wrench] class StoredActionContext(ctx: TestContext) extends ActionContex
 
 class DefaultContext extends TestContext {
   val runTimeout: Int = 2000
+  val compileTimeout: Int = 1000
 
   protected  val failedTests = new scala.collection.mutable.ListBuffer[TestCase]
   protected val passedTests = new scala.collection.mutable.ListBuffer[TestCase]
@@ -118,8 +122,14 @@ class ParallelContext extends DefaultContext {
     passedTests += test
   }
 
-  override def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit =
-    tests.par.foreach(op(_))
+  override def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit = {
+    import ExecutionContext.Implicits.global
+    import duration.Duration
+
+    val tasks = tests.map { test => Future(op(test)) }
+    val future = Future.sequence(tasks)
+    Await.result(future, Duration.Inf)
+  }
 
   override def transaction(op: given ActionContext => Unit): Unit = {
     val actionCtx: StoredActionContext = new StoredActionContext(this)

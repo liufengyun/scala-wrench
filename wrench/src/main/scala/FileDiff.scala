@@ -19,7 +19,7 @@ object FileDiff {
 
     def linesMatch =
       outputLines.length == checkLines.length &&
-      (outputLines, checkLines).zipped.forall(_ == _)
+      outputLines.zip(checkLines).forall(_ == _)
 
     if (!linesMatch) Some(
       s"""|Output from '$sourceTitle' did not match check file. Actual output:
