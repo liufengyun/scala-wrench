@@ -14,9 +14,9 @@ It is supposed to make your life easier if
 
 *** SBT setting
 
-Add Wrench as a test dependency in SBT[fn:version]:
+Add Wrench as a test dependency in SBT *:
 
-[fn:version] For Dotty 0.17, the version `0.0.2` should be used.
+/For Dotty 0.17, the version `0.0.2` should be used/.
 
 #+begin_src scala
         libraryDependencies += "org.xmid" %% "scala-wrench" % "0.0.3" % "test"
