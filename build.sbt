@@ -1,12 +1,12 @@
 import xerial.sbt.Sonatype._
 
-lazy val dottyVersion = "0.18.1-RC1"
+lazy val dottyVersion = "0.19.0-RC1"
 
 lazy val wrench = project
   .in(file("wrench"))
   .settings(
     name := "scala-wrench",
-    version := "0.0.3",
+    version := "0.0.4",
     organization := "org.xmid",
     scalaVersion := dottyVersion,
     fork := true,  // important

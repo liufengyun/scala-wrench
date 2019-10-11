@@ -18,7 +18,7 @@ Add Wrench as a test dependency in SBT:
 
 
 #+begin_src scala
-        libraryDependencies += "org.xmid" %% "scala-wrench" % "0.0.3" % "test"
+        libraryDependencies += "org.xmid" %% "scala-wrench" % "0.0.4" % "test"
         // for Dotty 0.17, use 0.0.2
 #+end_src
 

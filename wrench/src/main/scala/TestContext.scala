@@ -34,7 +34,7 @@ trait TestContext extends ActionContext {
   def cleanup: Unit
 
   /** A transaction where evens happen on the given ActionContext were commited atomically */
-  def transaction(op: given ActionContext => Unit): Unit
+  def transaction(op: (given ActionContext) => Unit): Unit
 
   /** Parallelize a list of operations */
   def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit
@@ -107,7 +107,7 @@ class DefaultContext extends TestContext {
 
   def cleanup: Unit = ()
 
-  def transaction(op: given ActionContext => Unit): Unit = op given this
+  def transaction(op: (given ActionContext) => Unit): Unit = op(given this)
 
   def (tests: List[TestCase]) parallelize(op: TestCase => Unit): Unit =
     tests.foreach(op(_))
@@ -131,9 +131,9 @@ class ParallelContext extends DefaultContext {
     Await.result(future, Duration.Inf)
   }
 
-  override def transaction(op: given ActionContext => Unit): Unit = {
+  override def transaction(op: (given ActionContext) => Unit): Unit = {
     val actionCtx: StoredActionContext = new StoredActionContext(this)
-    op given actionCtx
+    op(given actionCtx)
     actionCtx.commit
   }
 }

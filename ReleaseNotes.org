@@ -1,14 +1,19 @@
 * Release Notes
 
-** v0.0.3 Sep 4th, 2019
+** v0.0.4 Oct 11, 2019
+
+- Handle exceptions in compilation
+- Evolve to Dotty 0.19
+
+** v0.0.3 Sep 4, 2019
 
 - Evolve to Dotty 0.18.1, which uses the new collection
 
-** v0.0.2 Aug 23th, 2019
+** v0.0.2 Aug 23, 2019
 
 - Fix parallelization ([[https://github.com/liufengyun/scala-wrench/commit/25b441e637acd7159de982129f9d0b5f6e6269a8][25b441]])
 
-** v0.0.1 Aug 23th, 2019
+** v0.0.1 Aug 23, 2019
 
 Initial version
 
