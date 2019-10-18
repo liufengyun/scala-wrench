@@ -188,7 +188,6 @@ Now you can run the test set:
 
 : sbt dotty-bootstrapped/testCompilation
 
-Now
 
 ** Credits
 
