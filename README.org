@@ -164,6 +164,32 @@ at a line, enable the compiler option =-Xfatal-warning=.
   implicit val flags: TestFlags = Defaults.defaultOptions.and("-Xfatal-warnings")
 #+END_SRC
 
+*** How to test my plugin on the compiler test set?
+
+If you want your plugin to be used by the public, it is highly
+recommended to test it against the compiler test set.
+
+First, clone the Dotty [[https://github.com/lampepfl/dotty][repo]], then make the following changes in the source:
+
+#+BEGIN_SRC scala
+--- a/compiler/test/dotty/tools/vulpix/TestConfiguration.scala
++++ b/compiler/test/dotty/tools/vulpix/TestConfiguration.scala
+@@ -8,7 +8,8 @@ object TestConfiguration {
+
+   val noCheckOptions = Array(
+     "-pagewidth", "120",
+-    "-color:never"
++    "-color:never",
++    "-Xplugin:lib/my-plugin_0.19-0.0.1.jar"
+   )
+#+END_SRC
+
+Now you can run the test set:
+
+: sbt dotty-bootstrapped/testCompilation
+
+Now
+
 ** Credits
 
 The code takes inspiration from the test framework for Dotty, and follows its
